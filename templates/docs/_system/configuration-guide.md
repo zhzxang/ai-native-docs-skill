@@ -6,7 +6,7 @@
 
 `project.name` 和 `project.owner` 填实际项目与责任主体；`operating_mode` 初始为 `bootstrap`。核心事实、命令、权限及交接演练经确认后才改为 `maintenance`；这个标记不增加任何访问权限。
 
-`work_tracking.mode` 默认 `repository`，状态由 `docs/work/items/` 拥有。改为 `external` 时记录真实系统定位，并停止维护第二套本地状态。内置 new 会拒绝在外部模式下创建本地任务，但工具不负责外部同步。
+`work_tracking.mode` 默认 `repository`，状态由 `task` 条目元数据拥有；当前可能位于 `docs/work/items.md` 或已展开的 `docs/work/items/`，使用定位工具解析。改为 `external` 时记录真实系统定位，并停止维护第二套本地状态。内置 new 会拒绝在外部模式下创建本地任务，但工具不负责外部同步。
 
 每条 `locations` 的字段：
 
@@ -46,6 +46,20 @@
 
 ## routes.json 与 collections.json
 
-routes 中的 must_read、read_when 和 write_back 指向稳定入口。先定位具体相关条目，不读取一个集合下所有文件。collections 登记模板目录、类型键与前缀；page_size 默认 40，生成目录按类型分页。
+`collections.json` 采用 schema_version 2。`defaults` 声明 `compact_max_items: 2`、禁止空业务文件和空集合目录、`auto_collapse: false`；`page_size` 默认 40。各集合登记以下内容，不手工保存 `item_count`：
+
+| 字段 | 含义 |
+|---|---|
+| key | 稳定逻辑类别，如 feature、task、feedback |
+| base_path | 仓库相对基础路径，不含 `.md`；未展开使用 `<base_path>.md`，展开使用 `<base_path>/<ID>-<slug>.md` |
+| prefix | ID 前缀；全库检查 ID 唯一性 |
+| unit | 一个可独立命名、检索、维护对象的语义边界，不按标题和编辑次数计数 |
+| minimum_content | 该类型的最低充分内容，不能用空占位符代替事实 |
+| template | 集中模板源 `docs/_templates/<key>.md`，不是业务实例 |
+| title / summary / authority | 分类职责、检索摘要与信息角色 |
+
+routes 中的 `must_read`、`read_when` 和 `write_back` 使用 `{"collection":"feature"}` 引用集合，由工具解析现有紧凑文件或展开目录；尚无内容时显示按需位置，不为路由预建空壳。按需单篇文档使用 `optional_path`；固定维护规则可直接引用稳定实际路径。先定位具体相关条目，不读取整个集合。`read_when` 的条件资料在任务满足条件时仍需核验，位置尚不存在时记录缺口，不视为要求自动失效。
+
+物理路径转换不改变类别、最低内容、状态语义或授权要求。修改配置须同步适配工具、路由和示例，不能只用新 JSON 覆盖旧工具并期待兼容；该 schema 是本项目格式，不是客户端自动发现规范。
 
 新增规则或类型后运行 check，再根据真实变更重建索引。人工导航、机器路由和源记录发生矛盾时先修正唯一可编辑来源。

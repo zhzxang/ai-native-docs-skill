@@ -1,55 +1,70 @@
 # 文档工具
 
-需要 Python 3.10 或更高版本，仅使用标准库，无第三方依赖。工具不联网、不执行项目命令、不连接工单系统、不批准规范，不改变生产权限。
+需要 Python 3.10 或更高版本，仅使用标准库。工具不联网、不执行登记的项目命令，也不批准文档或改变生产权限。
 
-## 命令
-在仓库根目录运行：
+## 初始化参考包
+
+从这份仓库运行，先查看目标变更，再部署入口、协议、工具和集中参考源：
 
 ```bash
-# 模板结构检查，未初始化的草稿可以保留。
-python3 docs/_tools/docctl.py check
+python3 templates/docs/_tools/init_docs.py --target /目标仓库 --dry-run
+python3 templates/docs/_tools/init_docs.py --target /目标仓库
+```
 
-# 就绪检查；新模板应失败，直到核心配置与文档确实完成。
+初始化不创建业务分类树、空集合、业务占位文档或生成索引。所有同名目标文件均拒绝覆盖，已有项目先逐项合并。只有显式提供 `--overview-title` 和 `--overview-summary` 时，才将所给内容保存为 `docs/project/overview.md` 草案；不补写未经核验的事实。
+
+## 目标项目中的命令
+
+在目标仓库根目录执行：
+
+```bash
+# 结构检查；严格就绪检查还要求项目事实、位置和验证命令已配置。
+python3 docs/_tools/docctl.py check
 python3 docs/_tools/docctl.py check --strict
 
-# 创建草稿，ID 全局唯一且禁止覆盖。
+# 创建第一个或第二个条目时写入同一紧凑文件，第三个条目触发展开。
 python3 docs/_tools/docctl.py new feature FEAT-001 subscription --title "订阅功能"
 python3 docs/_tools/docctl.py new task TASK-001 subscription-bug --title "调查订阅问题" --kind bug
 
-# 查看任务或规范；默认不包含模板、生成物和归档。
+# 逐条检索：同一文件内的条目拥有各自元数据和锚点。
 python3 docs/_tools/docctl.py find --type task --kind bug --state queued --limit 20
-python3 docs/_tools/docctl.py find --type feature --status active --query "订阅"
+python3 docs/_tools/docctl.py find --type feature --query "订阅"
 
-# 展示任务路由，不会自动读取所有文件或执行操作。
+# 根据集合 key 解析实际文件或目录，未发生的内容只提示缺口。
 python3 docs/_tools/docctl.py route billing
 
-# 重建分页的人可读 / 机器目录，每页最多 40 条。
+# 按需重建索引；每页最多 40 条，源路径带条目锚点。
 python3 docs/_tools/docctl.py index
-
-# 运行工具自身测试；不是项目业务测试。
-python3 -m unittest discover -s docs/_tools -p 'test_*.py' -v
 ```
 
-也可在脚本路径后、子命令前用 `--root /实际仓库路径` 指定根目录。CLI 输出使用 JSON，方便人和 Agent 读取；失败返回非零退出码。
+也可在子命令前使用 `--root /实际仓库路径`。命令输出 JSON，失败返回非零退出码。在本参考包运行检查用 `python3 templates/docs/_tools/docctl.py check`，工具支持下划线入口源；实际安装后入口使用 `README.md` 和 `AGENTS.md`。
 
-工具会在本地扫描源文件并提取元数据、标题和内容校验值；不会把全库正文输出给 Agent 上下文。规模扩大后可改为增量索引，但不应把扫描过程与模型上下文加载混为一谈。
+## 新增和更新
 
-## 新建记录
-类型、模板、目录和 ID 前缀由 `docs/_system/collections.json` 登记。`new` 只把模板的 ID、标题和文档状态初始化；其他占位符仍需填写。不会自行填 owner、核验时间、批准者或通过结果。
+所有写入先读取 [写入协议](../_system/writing-policy.md) 和 [集合注册表](../_system/collections.json)，再检索同主题条目。`new` 拒绝重复 ID，以及同类型同标题或同 slug 的新增；这只能发现明确重复，语义上的同一对象仍需审查。补充、纠错或修改既有对象时编辑原条目，保持 ID，不生成“补充版”“最终版”。`new` 对查重、计数、追加和迁移持有写入锁；并发冲突会拒绝本次写入，等待已有操作完成后重试。中断遗留的锁须先确认没有活动写入者，再人工移除，不自动清理。
 
-并发创建禁止覆盖同一路径，合并分支时仍需校验全库 ID 唯一性。`new` 不负责分配全局分布式序号，不把文件锁当作任务认领系统。
+模板源位于 `docs/_templates/<key>.md`。`new` 将 ID、标题、slug 和文档状态初始化为草案，不填写责任主体、核验日期、批准依据或成功结果。创建后填写摘要与适用范围，用实际内容替换各节写作指令，并移除“集中参考源”用途说明和不适用空章节；关键未知必须保留。1–2 条保存在 `<base_path>.md`，每条使用独立 `yaml doc-meta`；第 3 条将原条目转换为 front matter 文件，保留 ID、状态、适用范围与证据，同时修复普通 Markdown 入链、出链和定位引用。已展开集合保持目录，不自动收拢，不为每条再建一层目录，也不默认增加集合 README。
+
+工具迁移应在同一可审查变更中完成，再运行 `check` 和必要的 `index`。不要同时保留聚合正文和目录正文。确需保留外部旧链接时，依照协议留下带 `doc-redirect` 标记的薄跳转页，不再编辑为集合正文。工具支持普通行内与引用式 Markdown 链接的迁移；HTML 链接、外部引用及其他 Markdown 方言仍需人工检查。
 
 ## 检查范围
-结构检查涵盖普通相对 Markdown 文件链接、文档 ID、受限元数据、任务状态、发布状态、批准字段、路由和配置引用。active 文档不能残留占位符；核验时间和证据必须成对。
 
-strict 模式额外检查项目声明的核心文档、真实位置和最小验证命令是否填写，以及必需文档是否 active。它只检查声明的一致性，不会访问外部系统或证明核验记录属实。
+`check` 检查紧凑条目计数、逐条元数据、ID 唯一性、逻辑归属、空集合、双正文来源、普通相对链接及本套格式中的锚点、状态、批准字段和路由配置。active 内容不能残留占位符，核验时间与证据必须成对。已展开集合只剩 1–2 条仍可通过。
 
-本工具不是通用 YAML / Markdown 解析器，不检查所有锚点、引用式链接、外链、法律适用性、业务正确性、密钥泄漏或真实权限。所用元数据子集见 conventions。需要这些能力时再按实际技术栈增加专门检查。
+`check --strict` 继续检查项目声明的核心文档、必需真实位置和最低验证命令是否就绪。初始化的参考包故意保留未知，严格检查应失败。检查不访问外部系统、不运行项目测试、不证明业务语义或授权真实性，也不能阻止直接 Shell 写入；需要正式分支门禁时，将结构检查纳入项目实际 CI 与分支保护。
 
-## 索引与状态
-索引从源文件元数据生成，保持按类型分页；不扫描模板和生成物作为实例。空集合不生成空页面。生成器只重建 `_generated/indexes/` 与 `_generated/catalog/`，这些目录不要放手写资料。
+## 索引与任务状态
 
-源文件和索引使用内容校验值关联，但哈希只用于发现变化，不证明内容准确。生成器在源记录变化时需要重新运行；它不会自动批准草案或改变任务状态。
+`find` 和 `index` 从源条目提取摘要，排除集中参考源和模板；一个紧凑文件里的两个条目是两条记录。内容哈希用于发现变化，不证明正确性。索引只重建 `_generated/indexes/` 和 `_generated/catalog/`，空集合不生成页面，不手工维护状态或计数副本。
 
-## 外部任务系统
-切换到外部 Issue 系统时，将项目映射中的 work_tracking 改为外部来源，并停止把本地任务当作另一套状态源。本工具未实现外部同步；需要单独接入具备授权和冲突规则的连接器。
+任务 `state`、文档 `status` 和发布 `release_state` 分开维护。任务默认由逻辑集合 `task` 的元数据拥有状态；切换外部工作项系统后，工具拒绝新增本地任务，不提供外部同步。
+
+## 工具验证
+
+从本参考包仓库运行：
+
+```bash
+python3 -m unittest discover -s templates/docs/_tools -p 'test_*.py' -v
+```
+
+这是工具自身的测试，覆盖初始化、阈值展开、逐条状态、引用迁移和结构门禁，不是项目业务测试。

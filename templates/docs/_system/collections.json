@@ -1,606 +1,912 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "defaults": {
+    "compact_max_items": 2,
+    "create_empty_business_documents": false,
+    "create_empty_collection_directories": false,
+    "auto_collapse": false
+  },
   "page_size": 40,
   "collections": [
     {
       "key": "term",
-      "directory": "docs/project/glossary",
-      "template": "docs/project/glossary/_template.md",
+      "template": "docs/_templates/term.md",
       "prefix": "TERM",
       "title": "业务术语",
       "summary": "一个术语的定义、边界和同义词。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立定义与使用边界的业务术语",
+      "base_path": "docs/project/glossary",
+      "minimum_content": [
+        "定义与边界",
+        "对应表示",
+        "依据与变更"
+      ]
     },
     {
       "key": "roadmap",
-      "directory": "docs/product/roadmap",
-      "template": "docs/product/roadmap/_template.md",
+      "template": "docs/_templates/roadmap.md",
       "prefix": "ROADMAP",
       "title": "阶段路线图",
       "summary": "一个阶段或时间窗口的目标、取舍和退出条件。",
       "authority": "normative",
-      "unit": "每个阶段或时间窗口一份文件"
+      "unit": "一个阶段或时间窗口的目标与取舍",
+      "base_path": "docs/product/roadmap",
+      "minimum_content": [
+        "阶段与范围",
+        "退出条件",
+        "依据与决策"
+      ]
     },
     {
       "key": "feature",
-      "directory": "docs/product/features",
-      "template": "docs/product/features/_template.md",
+      "template": "docs/_templates/feature.md",
       "prefix": "FEAT",
       "title": "功能需求 / PRD",
       "summary": "一个可独立讨论的功能的目标、规则、异常与验收。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个可以独立讨论和验收的功能",
+      "base_path": "docs/product/features",
+      "minimum_content": [
+        "范围与规则",
+        "验收",
+        "依据与关联"
+      ]
     },
     {
       "key": "journey",
-      "directory": "docs/product/journeys",
-      "template": "docs/product/journeys/_template.md",
+      "template": "docs/_templates/journey.md",
       "prefix": "FLOW",
       "title": "用户流程",
       "summary": "一个跨页面或跨功能流程的路径、分支与中断恢复。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一条具有独立入口、目标和终点的用户流程",
+      "base_path": "docs/product/journeys",
+      "minimum_content": [
+        "场景与边界",
+        "流程与恢复",
+        "验证与依据"
+      ]
     },
     {
       "key": "page",
-      "directory": "docs/product/pages",
-      "template": "docs/product/pages/_template.md",
+      "template": "docs/_templates/page.md",
       "prefix": "PAGE",
       "title": "页面与信息架构",
       "summary": "一个页面或导航节点的职责、入口、出口与访问条件。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立职责和交互边界的页面",
+      "base_path": "docs/product/pages",
+      "minimum_content": [
+        "职责与内容",
+        "状态与交互",
+        "验证与依据"
+      ]
     },
     {
       "key": "metric",
-      "directory": "docs/product/metrics",
-      "template": "docs/product/metrics/_template.md",
+      "template": "docs/_templates/metric.md",
       "prefix": "METRIC",
       "title": "Analytics / 指标定义",
       "summary": "一个指标的业务口径、公式、数据来源和验证。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立计算口径的业务指标",
+      "base_path": "docs/product/metrics",
+      "minimum_content": [
+        "含义与口径",
+        "来源与计算",
+        "核验与限制"
+      ]
     },
     {
       "key": "experiment",
-      "directory": "docs/product/experiments",
-      "template": "docs/product/experiments/_template.md",
+      "template": "docs/_templates/experiment.md",
       "prefix": "EXP",
       "title": "产品实验",
       "summary": "一次产品实验的假设、设计、停止条件和结论。",
       "authority": "evidence",
-      "unit": "每次实验一份文件"
+      "unit": "一次有独立假设和判定条件的实验",
+      "base_path": "docs/product/experiments",
+      "minimum_content": [
+        "假设与设计",
+        "指标与授权",
+        "结果与结论"
+      ]
     },
     {
       "key": "token",
-      "directory": "docs/design/tokens",
-      "template": "docs/design/tokens/_template.md",
+      "template": "docs/_templates/token.md",
       "prefix": "TOKEN",
       "title": "设计 Tokens",
       "summary": "一组语义化 Tokens 的用途、来源、生成与消费关系。",
       "authority": "normative",
-      "unit": "每组具有共同语义和来源的 Tokens 一份文件"
+      "unit": "一组具有共同语义和来源的设计 Tokens",
+      "base_path": "docs/design/tokens",
+      "minimum_content": [
+        "范围与语义",
+        "来源与消费",
+        "变更与验证"
+      ]
     },
     {
       "key": "component",
-      "directory": "docs/design/components",
-      "template": "docs/design/components/_template.md",
+      "template": "docs/_templates/component.md",
       "prefix": "COMP",
       "title": "组件规范",
       "summary": "一个组件的状态、交互、可访问性和实现关联。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立职责和交互契约的组件",
+      "base_path": "docs/design/components",
+      "minimum_content": [
+        "职责与契约",
+        "状态与交互",
+        "来源与验证"
+      ]
     },
     {
       "key": "design-asset",
-      "directory": "docs/design/assets",
-      "template": "docs/design/assets/_template.md",
+      "template": "docs/_templates/design-asset.md",
       "prefix": "ASSET",
       "title": "设计资产登记",
       "summary": "一个外部设计文件或批准快照的定位与可信边界。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个能够独立定位和核验的设计资产",
+      "base_path": "docs/design/assets",
+      "minimum_content": [
+        "资产与范围",
+        "来源与定位",
+        "核验与限制"
+      ]
     },
     {
       "key": "module",
-      "directory": "docs/engineering/architecture/modules",
-      "template": "docs/engineering/architecture/modules/_template.md",
+      "template": "docs/_templates/module.md",
       "prefix": "MOD",
       "title": "模块设计",
       "summary": "一个逻辑模块的职责、边界、接口和运行行为。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个具有独立职责和边界的模块",
+      "base_path": "docs/engineering/architecture/modules",
+      "minimum_content": [
+        "职责与定位",
+        "契约与约束",
+        "证据与变更"
+      ]
     },
     {
       "key": "adr",
-      "directory": "docs/engineering/adrs",
-      "template": "docs/engineering/adrs/_template.md",
+      "template": "docs/_templates/adr.md",
       "prefix": "ADR",
       "title": "技术决策记录 ADR",
       "summary": "一个重要决策的背景、方案、理由、后果和替代关系。",
       "authority": "normative",
-      "unit": "每个独立决策一份文件"
+      "unit": "一个可以独立批准或替代的技术决策",
+      "base_path": "docs/engineering/adrs",
+      "minimum_content": [
+        "背景与方案",
+        "决策与理由",
+        "后果与核验"
+      ]
     },
     {
       "key": "dev-guide",
-      "directory": "docs/engineering/development/guides",
-      "template": "docs/engineering/development/guides/_template.md",
+      "template": "docs/_templates/dev-guide.md",
       "prefix": "GUIDE",
       "title": "开发专题指南",
       "summary": "一个特定开发任务的前提、步骤、验证和故障处理。",
       "authority": "procedure",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立使用场景的开发专题指南",
+      "base_path": "docs/engineering/development/guides",
+      "minimum_content": [
+        "适用条件与权限",
+        "步骤",
+        "验证与失败处理"
+      ]
     },
     {
       "key": "dependency",
-      "directory": "docs/engineering/dependencies",
-      "template": "docs/engineering/dependencies/_template.md",
+      "template": "docs/_templates/dependency.md",
       "prefix": "DEP",
       "title": "关键技术依赖",
       "summary": "一个关键运行时、库或构建依赖的用途、版本来源和升级风险。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个能够独立升级或退出的关键技术依赖",
+      "base_path": "docs/engineering/dependencies",
+      "minimum_content": [
+        "用途与版本",
+        "接入与风险",
+        "核验与退出"
+      ]
     },
     {
       "key": "api",
-      "directory": "docs/contracts/api",
-      "template": "docs/contracts/api/_template.md",
+      "template": "docs/_templates/api.md",
       "prefix": "API",
       "title": "API 契约说明",
       "summary": "一个 API 操作或内聚接口组的业务语义和兼容约束。",
       "authority": "normative",
-      "unit": "每个操作或不能合理拆开的内聚接口组一份文件"
+      "unit": "一个操作或不能合理拆开的内聚接口组",
+      "base_path": "docs/contracts/api",
+      "minimum_content": [
+        "操作与契约",
+        "权限与失败",
+        "验证与依据"
+      ]
     },
     {
       "key": "event",
-      "directory": "docs/contracts/events",
-      "template": "docs/contracts/events/_template.md",
+      "template": "docs/_templates/event.md",
       "prefix": "EVENT",
       "title": "事件 / Webhook 契约",
       "summary": "一个内部事件、埋点或 Webhook 的语义与投递规则。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立语义和投递契约的事件",
+      "base_path": "docs/contracts/events",
+      "minimum_content": [
+        "含义与参与者",
+        "数据与投递",
+        "演进与验证"
+      ]
     },
     {
       "key": "error",
-      "directory": "docs/contracts/errors",
-      "template": "docs/contracts/errors/_template.md",
+      "template": "docs/_templates/error.md",
       "prefix": "ERR",
       "title": "错误语义",
       "summary": "一个稳定错误码或错误类别的含义、恢复和暴露规则。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立业务含义和恢复规则的错误",
+      "base_path": "docs/contracts/errors",
+      "minimum_content": [
+        "定义与范围",
+        "恢复与表达",
+        "验证与依据"
+      ]
     },
     {
       "key": "entity",
-      "directory": "docs/db/entities",
-      "template": "docs/db/entities/_template.md",
+      "template": "docs/_templates/entity.md",
       "prefix": "DATA",
       "title": "实体 / 表设计",
       "summary": "一个实体或表的业务含义、关系、约束和数据责任。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立业务语义和约束的数据实体",
+      "base_path": "docs/db/entities",
+      "minimum_content": [
+        "语义与结构来源",
+        "字段与约束",
+        "验证与影响"
+      ]
     },
     {
       "key": "migration",
-      "directory": "docs/db/migrations",
-      "template": "docs/db/migrations/_template.md",
+      "template": "docs/_templates/migration.md",
       "prefix": "MIG",
       "title": "数据迁移方案",
       "summary": "一次数据或结构迁移的计划、验证和恢复设计，不是迁移脚本。",
       "authority": "procedure",
-      "unit": "每次独立迁移一份文件"
+      "unit": "一次有独立目标和恢复边界的数据迁移",
+      "base_path": "docs/db/migrations",
+      "minimum_content": [
+        "范围与授权",
+        "执行与恢复",
+        "验证与证据"
+      ]
     },
     {
       "key": "data-lifecycle",
-      "directory": "docs/db/lifecycle",
-      "template": "docs/db/lifecycle/_template.md",
+      "template": "docs/_templates/data-lifecycle.md",
       "prefix": "LIFE",
       "title": "数据生命周期",
       "summary": "一类数据从收集到删除的用途、保存和第三方传播规则。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一类具有独立保存与删除规则的数据",
+      "base_path": "docs/db/lifecycle",
+      "minimum_content": [
+        "数据与用途",
+        "保存与流转",
+        "验证与批准"
+      ]
     },
     {
       "key": "test-case",
-      "directory": "docs/tests/cases",
-      "template": "docs/tests/cases/_template.md",
+      "template": "docs/_templates/test-case.md",
       "prefix": "TC",
       "title": "测试用例",
       "summary": "一个可复现的验证场景及其明确通过条件。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立前提和断言的测试场景",
+      "base_path": "docs/tests/cases",
+      "minimum_content": [
+        "要求与前提",
+        "步骤与断言",
+        "执行关联"
+      ]
     },
     {
       "key": "test-suite",
-      "directory": "docs/tests/suites",
-      "template": "docs/tests/suites/_template.md",
+      "template": "docs/_templates/test-suite.md",
       "prefix": "SUITE",
       "title": "测试 / 回归集合",
       "summary": "一个验证目标或发布场景所需的测试集合。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一组有共同触发和通过条件的回归用例",
+      "base_path": "docs/tests/suites",
+      "minimum_content": [
+        "触发与覆盖",
+        "执行与边界",
+        "通过与报告"
+      ]
     },
     {
       "key": "fixture",
-      "directory": "docs/tests/fixtures",
-      "template": "docs/tests/fixtures/_template.md",
+      "template": "docs/_templates/fixture.md",
       "prefix": "FIX",
       "title": "测试数据说明",
       "summary": "一组安全测试夹具的语义、来源、生成和清理方法。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一组有共同语义和生命周期的测试数据",
+      "base_path": "docs/tests/fixtures",
+      "minimum_content": [
+        "用途与来源",
+        "生成与隔离",
+        "验证与限制"
+      ]
     },
     {
       "key": "test-report",
-      "directory": "docs/tests/reports",
-      "template": "docs/tests/reports/_template.md",
+      "template": "docs/_templates/test-report.md",
       "prefix": "TEST-RUN",
       "title": "测试执行报告",
       "summary": "一次真实验证的环境、执行过程、结果和证据。",
       "authority": "evidence",
-      "unit": "每次实际测试运行一份文件"
+      "unit": "一次可以独立核验的实际测试运行",
+      "base_path": "docs/tests/reports",
+      "minimum_content": [
+        "对象与环境",
+        "实际结果与证据",
+        "未验证与结论"
+      ]
     },
     {
       "key": "environment",
-      "directory": "docs/operations/environments",
-      "template": "docs/operations/environments/_template.md",
+      "template": "docs/_templates/environment.md",
       "prefix": "ENV",
       "title": "环境配置",
       "summary": "一个运行环境的用途、依赖、访问和隔离规则。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个可以独立配置和核验的环境",
+      "base_path": "docs/operations/environments",
+      "minimum_content": [
+        "职责与定位",
+        "配置与隔离",
+        "核验与差异"
+      ]
     },
     {
       "key": "config",
-      "directory": "docs/operations/configuration",
-      "template": "docs/operations/configuration/_template.md",
+      "template": "docs/_templates/config.md",
       "prefix": "CONFIG",
       "title": "配置项 / 配置组",
       "summary": "一组配置的用途、校验、敏感性、注入与失效行为。",
       "authority": "descriptive",
-      "unit": "每个具有共同职责的配置组一份文件"
+      "unit": "一组具有共同职责和修改边界的配置",
+      "base_path": "docs/operations/configuration",
+      "minimum_content": [
+        "职责与来源",
+        "语义与环境",
+        "修改与验证"
+      ]
     },
     {
       "key": "service",
-      "directory": "docs/operations/services",
-      "template": "docs/operations/services/_template.md",
+      "template": "docs/_templates/service.md",
       "prefix": "SERVICE",
       "title": "第三方服务",
       "summary": "一个外部服务的职责、接入、故障影响和退出路径。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个可以独立接入和退出的外部服务",
+      "base_path": "docs/operations/services",
+      "minimum_content": [
+        "职责与定位",
+        "接入与约束",
+        "核验与退出"
+      ]
     },
     {
       "key": "deployment",
-      "directory": "docs/operations/deployment",
-      "template": "docs/operations/deployment/_template.md",
+      "template": "docs/_templates/deployment.md",
       "prefix": "DEPLOY",
       "title": "部署程序",
       "summary": "一种目标环境或部署方式的步骤、门禁与恢复方法。",
       "authority": "procedure",
-      "unit": "每个内聚的部署目标或部署方式一份文件"
+      "unit": "一个内聚的部署目标或部署方式",
+      "base_path": "docs/operations/deployment",
+      "minimum_content": [
+        "范围与授权",
+        "发布与恢复",
+        "验证与记录"
+      ]
     },
     {
       "key": "runbook",
-      "directory": "docs/operations/runbooks",
-      "template": "docs/operations/runbooks/_template.md",
+      "template": "docs/_templates/runbook.md",
       "prefix": "RUN",
       "title": "运维 Runbook",
       "summary": "一种故障场景的识别、诊断、处置、验证和升级程序。",
       "authority": "procedure",
-      "unit": "每种可独立处置的故障场景一份文件"
+      "unit": "一种可以独立诊断和处置的故障场景",
+      "base_path": "docs/operations/runbooks",
+      "minimum_content": [
+        "触发与权限",
+        "诊断与处置",
+        "验证与失败处理"
+      ]
     },
     {
       "key": "incident",
-      "directory": "docs/operations/incidents",
-      "template": "docs/operations/incidents/_template.md",
+      "template": "docs/_templates/incident.md",
       "prefix": "INC",
       "title": "事故记录",
       "summary": "一次真实故障的影响、时间线、恢复证据和后续关联。",
       "authority": "evidence",
-      "unit": "每次真实事故一份文件"
+      "unit": "一次有独立影响和时间线的真实事故",
+      "base_path": "docs/operations/incidents",
+      "minimum_content": [
+        "概要与事实",
+        "处置与恢复",
+        "原因与后续"
+      ]
     },
     {
       "key": "signal",
-      "directory": "docs/operations/observability",
-      "template": "docs/operations/observability/_template.md",
+      "template": "docs/_templates/signal.md",
       "prefix": "SIGNAL",
       "title": "监测与告警",
       "summary": "一个可观测信号或告警的定义、阈值来源和响应方式。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立观测或告警语义的信号",
+      "base_path": "docs/operations/observability",
+      "minimum_content": [
+        "目的与定义",
+        "阈值与响应",
+        "验证与依据"
+      ]
     },
     {
       "key": "cost-period",
-      "directory": "docs/operations/costs",
-      "template": "docs/operations/costs/_template.md",
+      "template": "docs/_templates/cost-period.md",
       "prefix": "COST",
       "title": "成本记录",
       "summary": "一个结算周期的预算、实际、预测、计量口径与来源。",
       "authority": "evidence",
-      "unit": "每个结算周期一份文件，必要时按年份分目录"
+      "unit": "一个独立结算周期的成本记录",
+      "base_path": "docs/operations/costs",
+      "minimum_content": [
+        "周期与口径",
+        "账目与汇总",
+        "差异与结论"
+      ]
     },
     {
       "key": "backup-plan",
-      "directory": "docs/operations/backup",
-      "template": "docs/operations/backup/_template.md",
+      "template": "docs/_templates/backup-plan.md",
       "prefix": "BACKUP",
       "title": "备份与恢复方案",
       "summary": "一种数据资产的备份、恢复程序与演练要求。",
       "authority": "procedure",
-      "unit": "每类需要独立恢复的数据资产或系统一份文件"
+      "unit": "一类需要独立恢复的数据资产或系统",
+      "base_path": "docs/operations/backup",
+      "minimum_content": [
+        "范围与目标",
+        "恢复与权限",
+        "验证与演练"
+      ]
     },
     {
       "key": "release-checklist",
-      "directory": "docs/releases/checklists",
-      "template": "docs/releases/checklists/_template.md",
+      "template": "docs/_templates/release-checklist.md",
       "prefix": "CHECKLIST",
       "title": "发布检查程序",
       "summary": "一种发布类型的可复用检查项与阻断规则。",
       "authority": "procedure",
-      "unit": "每种具有独立风险模型的发布类型一份文件"
+      "unit": "一种有独立风险模型的发布类型",
+      "base_path": "docs/releases/checklists",
+      "minimum_content": [
+        "使用条件与权限",
+        "检查与停止条件",
+        "记录与证据"
+      ]
     },
     {
       "key": "release",
-      "directory": "docs/releases/entries",
-      "template": "docs/releases/entries/_template.md",
+      "template": "docs/_templates/release.md",
       "prefix": "REL",
       "title": "发布记录 / Changelog",
       "summary": "一个版本的用户变化、部署状态、检查证据与恢复信息。",
       "authority": "evidence",
-      "unit": "每个版本或独立部署事件一份文件"
+      "unit": "一个版本或独立部署事件",
+      "base_path": "docs/releases/entries",
+      "minimum_content": [
+        "版本与变化",
+        "执行与证据",
+        "状态与未解决项"
+      ]
     },
     {
       "key": "assumption",
-      "directory": "docs/business/assumptions",
-      "template": "docs/business/assumptions/_template.md",
+      "template": "docs/_templates/assumption.md",
       "prefix": "ASSUMPTION",
       "title": "商业假设",
       "summary": "一个可检验的商业假设及其证据和决策条件。",
       "authority": "evidence",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个能够独立验证的商业假设",
+      "base_path": "docs/business/assumptions",
+      "minimum_content": [
+        "假设与重要性",
+        "依据与验证",
+        "结果与决定"
+      ]
     },
     {
       "key": "pricing",
-      "directory": "docs/business/pricing",
-      "template": "docs/business/pricing/_template.md",
+      "template": "docs/_templates/pricing.md",
       "prefix": "PRICE",
       "title": "定价与套餐版本",
       "summary": "一个生效范围明确的定价版本、套餐限制和试用规则。",
       "authority": "normative",
-      "unit": "每个有明确适用范围的定价版本一份文件"
+      "unit": "一个适用范围和生效区间明确的定价版本",
+      "base_path": "docs/business/pricing",
+      "minimum_content": [
+        "版本与范围",
+        "定价与权益",
+        "批准与验证"
+      ]
     },
     {
       "key": "campaign",
-      "directory": "docs/marketing/campaigns",
-      "template": "docs/marketing/campaigns/_template.md",
+      "template": "docs/_templates/campaign.md",
       "prefix": "CAMPAIGN",
       "title": "营销活动",
       "summary": "一次活动的受众、目标、内容、渠道、预算和结果。",
       "authority": "descriptive",
-      "unit": "每次活动一份文件"
+      "unit": "一次有独立目标和预算的营销活动",
+      "base_path": "docs/marketing/campaigns",
+      "minimum_content": [
+        "目标与计划",
+        "预算与发布条件",
+        "执行与结果"
+      ]
     },
     {
       "key": "copy",
-      "directory": "docs/marketing/copy",
-      "template": "docs/marketing/copy/_template.md",
+      "template": "docs/_templates/copy.md",
       "prefix": "COPY",
       "title": "营销文案",
       "summary": "一个页面、渠道或用途的文案及其事实依据。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一组有共同使用位置和批准边界的文案",
+      "base_path": "docs/marketing/copy",
+      "minimum_content": [
+        "位置与正文",
+        "承诺与依据",
+        "审查与发布"
+      ]
     },
     {
       "key": "seo",
-      "directory": "docs/marketing/seo",
-      "template": "docs/marketing/seo/_template.md",
+      "template": "docs/_templates/seo.md",
       "prefix": "SEO",
       "title": "SEO 主题与策略",
       "summary": "一个搜索主题或页面群的意图、内容边界和验证。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立搜索意图和页面映射的主题",
+      "base_path": "docs/marketing/seo",
+      "minimum_content": [
+        "意图与映射",
+        "要求与指标",
+        "核验与依据"
+      ]
     },
     {
       "key": "content",
-      "directory": "docs/marketing/content",
-      "template": "docs/marketing/content/_template.md",
+      "template": "docs/_templates/content.md",
       "prefix": "CONTENT",
       "title": "内容计划 / 发布条目",
       "summary": "一篇内容或一次平台发布的选题、制作、批准与结果。",
       "authority": "descriptive",
-      "unit": "每篇内容或独立发布条目一份文件"
+      "unit": "一篇内容或可独立发布的条目",
+      "base_path": "docs/marketing/content",
+      "minimum_content": [
+        "选题与正文",
+        "事实与发布条件",
+        "实际发布与结果"
+      ]
     },
     {
       "key": "faq",
-      "directory": "docs/support/faq",
-      "template": "docs/support/faq/_template.md",
+      "template": "docs/_templates/faq.md",
       "prefix": "FAQ",
       "title": "客服 FAQ",
       "summary": "一个用户问题的标准回复、适用范围和升级条件。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个能够独立回答的用户问题",
+      "base_path": "docs/support/faq",
+      "minimum_content": [
+        "问题与回答",
+        "依据与处理",
+        "核验与未知"
+      ]
     },
     {
       "key": "support-case",
-      "directory": "docs/support/cases",
-      "template": "docs/support/cases/_template.md",
+      "template": "docs/_templates/support-case.md",
       "prefix": "SUPPORT",
       "title": "客服处理记录",
       "summary": "一次脱敏客户问题的事实、回复、授权动作与解决证据。",
       "authority": "evidence",
-      "unit": "每次独立工单或内聚问题一份文件"
+      "unit": "一次独立工单或内聚的客服问题",
+      "base_path": "docs/support/cases",
+      "minimum_content": [
+        "来源与问题",
+        "诊断与动作",
+        "证据与后续"
+      ]
     },
     {
       "key": "privacy",
-      "directory": "docs/legal/privacy",
-      "template": "docs/legal/privacy/_template.md",
+      "template": "docs/_templates/privacy.md",
       "prefix": "PRIVACY",
       "title": "隐私政策版本",
       "summary": "一个适用范围明确的隐私政策草稿或已发布版本。",
       "authority": "normative",
-      "unit": "每个范围和生效区间明确的版本一份文件"
+      "unit": "一个范围和生效区间明确的隐私政策版本",
+      "base_path": "docs/legal/privacy",
+      "minimum_content": [
+        "版本与适用范围",
+        "数据处理规则",
+        "核验与发布"
+      ]
     },
     {
       "key": "terms",
-      "directory": "docs/legal/terms",
-      "template": "docs/legal/terms/_template.md",
+      "template": "docs/_templates/terms.md",
       "prefix": "TERMS",
       "title": "服务条款版本",
       "summary": "一个适用范围明确的服务条款草稿或已发布版本。",
       "authority": "normative",
-      "unit": "每个范围和生效区间明确的版本一份文件"
+      "unit": "一个范围和生效区间明确的服务条款版本",
+      "base_path": "docs/legal/terms",
+      "minimum_content": [
+        "主体与范围",
+        "服务与权利义务",
+        "审核与发布"
+      ]
     },
     {
       "key": "refund-policy",
-      "directory": "docs/legal/refunds",
-      "template": "docs/legal/refunds/_template.md",
+      "template": "docs/_templates/refund-policy.md",
       "prefix": "REFUND",
       "title": "退款 / 取消订阅规则",
       "summary": "一个版本的退款、取消和订阅结束处理规则。",
       "authority": "normative",
-      "unit": "每个适用范围和生效版本一份文件"
+      "unit": "一个范围和生效版本明确的退款或取消规则",
+      "base_path": "docs/legal/refunds",
+      "minimum_content": [
+        "范围与版本",
+        "取消与退款规则",
+        "核验与授权"
+      ]
     },
     {
       "key": "threat-model",
-      "directory": "docs/security/threat-models",
-      "template": "docs/security/threat-models/_template.md",
+      "template": "docs/_templates/threat-model.md",
       "prefix": "THREAT",
       "title": "威胁模型",
       "summary": "一个系统或业务流的资产、攻击面、威胁和控制取舍。",
       "authority": "descriptive",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立资产和信任边界的威胁模型",
+      "base_path": "docs/security/threat-models",
+      "minimum_content": [
+        "范围与边界",
+        "威胁与处置",
+        "验证与限制"
+      ]
     },
     {
       "key": "security-control",
-      "directory": "docs/security/controls",
-      "template": "docs/security/controls/_template.md",
+      "template": "docs/_templates/security-control.md",
       "prefix": "CONTROL",
       "title": "安全控制",
       "summary": "一个安全控制的目标、实现、验证和例外。",
       "authority": "normative",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立安全目标和核验条件的控制",
+      "base_path": "docs/security/controls",
+      "minimum_content": [
+        "目标与范围",
+        "要求与实施",
+        "批准与验证"
+      ]
     },
     {
       "key": "security-finding",
-      "directory": "docs/security/findings",
-      "template": "docs/security/findings/_template.md",
+      "template": "docs/_templates/security-finding.md",
       "prefix": "FINDING",
       "title": "安全发现",
       "summary": "一个安全问题的证据、风险、受影响范围和修复关联。",
       "authority": "evidence",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个能够独立复现和处理的安全发现",
+      "base_path": "docs/security/findings",
+      "minimum_content": [
+        "发现与范围",
+        "证据与风险",
+        "处置与核验"
+      ]
     },
     {
       "key": "feedback",
-      "directory": "docs/research/feedback",
-      "template": "docs/research/feedback/_template.md",
+      "template": "docs/_templates/feedback.md",
       "prefix": "FB",
       "title": "用户反馈",
       "summary": "一条内聚反馈的来源、场景、观察和产品关联。",
       "authority": "evidence",
-      "unit": "每条可独立处理的反馈一份文件"
+      "unit": "一条可以独立处理的用户反馈",
+      "base_path": "docs/research/feedback",
+      "minimum_content": [
+        "来源与时间",
+        "原始观察",
+        "结论与关联"
+      ]
     },
     {
       "key": "interview",
-      "directory": "docs/research/interviews",
-      "template": "docs/research/interviews/_template.md",
+      "template": "docs/_templates/interview.md",
       "prefix": "INTERVIEW",
       "title": "用户访谈",
       "summary": "一次访谈的研究问题、样本背景、发现和局限。",
       "authority": "evidence",
-      "unit": "每次访谈一份文件"
+      "unit": "一次能够独立定位和核验的访谈",
+      "base_path": "docs/research/interviews",
+      "minimum_content": [
+        "目的与样本",
+        "观察与证据",
+        "结论与局限"
+      ]
     },
     {
       "key": "competitor",
-      "directory": "docs/research/competitors",
-      "template": "docs/research/competitors/_template.md",
+      "template": "docs/_templates/competitor.md",
       "prefix": "COMPETITOR",
       "title": "竞品快照",
       "summary": "一个竞品在特定时间的功能、价格、定位和来源快照。",
       "authority": "evidence",
-      "unit": "每个竞品在一次采集窗口的一份快照"
+      "unit": "一个竞品在一次采集窗口的快照",
+      "base_path": "docs/research/competitors",
+      "minimum_content": [
+        "采集边界",
+        "事实与分析",
+        "意义与局限"
+      ]
     },
     {
       "key": "study",
-      "directory": "docs/research/studies",
-      "template": "docs/research/studies/_template.md",
+      "template": "docs/_templates/study.md",
       "prefix": "STUDY",
       "title": "市场 / 专题研究",
       "summary": "一次研究问题、方法、来源、结论和限制的记录。",
       "authority": "evidence",
-      "unit": "每个独立研究问题及采集版本一份文件"
+      "unit": "一个独立研究问题及其采集版本",
+      "base_path": "docs/research/studies",
+      "minimum_content": [
+        "问题与方法",
+        "发现与分析",
+        "结论与后续"
+      ]
     },
     {
       "key": "task",
-      "directory": "docs/work/items",
-      "template": "docs/work/items/_template.md",
+      "template": "docs/_templates/task.md",
       "prefix": "TASK",
       "title": "Backlog / Bug / 工作项",
       "summary": "一个工作项的目标、范围、验收、唯一状态与交接定位。",
       "authority": "descriptive",
-      "unit": "每个功能任务、Bug、技术债、文档或研究任务一份文件"
+      "unit": "一个有独立目标和验收的功能、Bug、技术债或研究工作项",
+      "base_path": "docs/work/items",
+      "minimum_content": [
+        "目标与范围",
+        "验收与证据",
+        "唯一状态与交接"
+      ]
     },
     {
       "key": "plan",
-      "directory": "docs/work/plans",
-      "template": "docs/work/plans/_template.md",
+      "template": "docs/_templates/plan.md",
       "prefix": "PLAN",
       "title": "复杂任务执行计划",
       "summary": "一个复杂任务的执行结构、当前进度和唯一交接摘要。",
       "authority": "descriptive",
-      "unit": "每个确实需要跨步骤交接的复杂任务一份文件"
+      "unit": "一个需要跨步骤交接的复杂任务执行计划",
+      "base_path": "docs/work/plans",
+      "minimum_content": [
+        "任务与边界",
+        "方案与验证",
+        "唯一交接"
+      ]
     },
     {
       "key": "worklog",
-      "directory": "docs/work/logs",
-      "template": "docs/work/logs/_template.md",
+      "template": "docs/_templates/worklog.md",
       "prefix": "LOG",
       "title": "项目日志 / Dev Log",
       "summary": "一次会话或一个工作窗口的客观记录与证据链接。",
       "authority": "evidence",
-      "unit": "每次会话、一天或一个明确工作窗口一份文件"
+      "unit": "一次会话、一天或明确工作窗口的实际日志",
+      "base_path": "docs/work/logs",
+      "minimum_content": [
+        "范围与事实",
+        "发现与验证",
+        "交接与关联"
+      ]
     },
     {
       "key": "review",
-      "directory": "docs/work/reviews",
-      "template": "docs/work/reviews/_template.md",
+      "template": "docs/_templates/review.md",
       "prefix": "REVIEW",
       "title": "复盘",
       "summary": "一次版本、事故、实验或周期的预期、结果、原因和改进。",
       "authority": "evidence",
-      "unit": "每次独立复盘一份文件"
+      "unit": "一次有独立对象和改进目标的复盘",
+      "base_path": "docs/work/reviews",
+      "minimum_content": [
+        "对象与结果",
+        "原因与局限",
+        "行动与回写"
+      ]
     },
     {
       "key": "approval",
-      "directory": "docs/work/approvals",
-      "template": "docs/work/approvals/_template.md",
+      "template": "docs/_templates/approval.md",
       "prefix": "APPROVAL",
       "title": "授权 / 批准记录",
       "summary": "一个可验证批准的范围、约束、有效期与撤销条件。",
       "authority": "evidence",
-      "unit": "每次批准或一个有明确范围和期限的预授权一份文件"
+      "unit": "一次批准或有明确范围和期限的预授权",
+      "base_path": "docs/work/approvals",
+      "minimum_content": [
+        "批准来源",
+        "范围与期限",
+        "前提与执行关联"
+      ]
     },
     {
       "key": "workflow",
-      "directory": "docs/automation/workflows",
-      "template": "docs/automation/workflows/_template.md",
+      "template": "docs/_templates/workflow.md",
       "prefix": "WF",
       "title": "可复用执行流程",
       "summary": "一种重复任务的触发、读取、执行、验证和交接流程。",
       "authority": "procedure",
-      "unit": "每个独立对象一份文件"
+      "unit": "一个有独立触发和输出的可复用流程",
+      "base_path": "docs/automation/workflows",
+      "minimum_content": [
+        "触发与前提",
+        "步骤",
+        "输出与交接"
+      ]
     },
     {
       "key": "archive-record",
-      "directory": "docs/archive/records",
-      "template": "docs/archive/records/_template.md",
+      "template": "docs/_templates/archive-record.md",
       "prefix": "ARCHIVE",
       "title": "归档迁移记录",
       "summary": "一次归档的范围、旧新路径、替代关系和访问限制。",
       "authority": "evidence",
-      "unit": "每次内聚的归档迁移一份文件"
+      "unit": "一次内聚的归档迁移",
+      "base_path": "docs/archive/records",
+      "minimum_content": [
+        "原因与范围",
+        "位置与权限",
+        "验证与证据"
+      ]
     }
   ]
 }

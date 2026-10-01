@@ -5,12 +5,13 @@
 | 入口 | 内容 |
 |---|---|
 | [初始化与迁移](bootstrap.md) | 初始化与迁移 |
+| [完整写入协议](writing-policy.md) | 所有文档写入的条目边界、最小内容、按需路径与第三条迁移 |
 | [35 类原文档迁移对照](original-document-map.md) | 35 类原文档迁移对照 |
 | [60 类条目模板](template-catalog.md) | 60 类条目模板 |
 | [映射与命令字段说明](configuration-guide.md) | 映射与命令字段说明 |
 | [命名、元数据与状态](conventions.md) | 命名、元数据与状态 |
 | [权威来源与冲突](authority.md) | 权威来源与冲突 |
-| [增长、分页与归档](lifecycle.md) | 增长、分页与归档 |
+| [增长、迁移与归档](lifecycle.md) | 紧凑集合、第三条展开、按需分页与历史保留 |
 | [变更影响检查](change-impact.md) | 变更影响检查 |
 | [完成与交付判定](definition-of-done.md) | 完成与交付判定 |
 | [执行授权策略提案](execution-policy.md) | 执行授权策略提案 |
@@ -22,6 +23,4 @@
 | [任务路由源](routes.json) | 任务路由源 |
 | [集合与模板登记](collections.json) | 集合与模板登记 |
 
-## 本次交付附件
-
-[完整实际目录树](directory-tree.txt)、[验证记录](validation-report.md)、[文件完整性校验](checksums.sha256)。
+部署只安装维护所需的规则、配置和工具。参考包中的目录树、校验清单和交付验证记录是该参考包的生成附件，不作为目标项目事实或必需安装文件。

@@ -1,336 +1,198 @@
-ai-project-docs-kit/
-├── docs/
-│   ├── _generated/
-│   │   ├── catalog/
-│   │   │   ├── access-policy/
-│   │   │   │   └── page-001.json
-│   │   │   ├── architecture-overview/
-│   │   │   │   └── page-001.json
-│   │   │   ├── business-model/
-│   │   │   │   └── page-001.json
-│   │   │   ├── database-overview/
-│   │   │   │   └── page-001.json
-│   │   │   ├── design-principles/
-│   │   │   │   └── page-001.json
-│   │   │   ├── development-conventions/
-│   │   │   │   └── page-001.json
-│   │   │   ├── development-guide/
-│   │   │   │   └── page-001.json
-│   │   │   ├── positioning/
-│   │   │   │   └── page-001.json
-│   │   │   ├── project-overview/
-│   │   │   │   └── page-001.json
-│   │   │   ├── secret-policy/
-│   │   │   │   └── page-001.json
-│   │   │   ├── security-baseline/
-│   │   │   │   └── page-001.json
-│   │   │   ├── test-strategy/
-│   │   │   │   └── page-001.json
-│   │   │   ├── workflow/
-│   │   │   │   └── page-001.json
-│   │   │   └── README.md
-│   │   ├── indexes/
-│   │   │   ├── access-policy/
-│   │   │   │   └── page-001.md
-│   │   │   ├── architecture-overview/
-│   │   │   │   └── page-001.md
-│   │   │   ├── business-model/
-│   │   │   │   └── page-001.md
-│   │   │   ├── database-overview/
-│   │   │   │   └── page-001.md
-│   │   │   ├── design-principles/
-│   │   │   │   └── page-001.md
-│   │   │   ├── development-conventions/
-│   │   │   │   └── page-001.md
-│   │   │   ├── development-guide/
-│   │   │   │   └── page-001.md
-│   │   │   ├── positioning/
-│   │   │   │   └── page-001.md
-│   │   │   ├── project-overview/
-│   │   │   │   └── page-001.md
-│   │   │   ├── secret-policy/
-│   │   │   │   └── page-001.md
-│   │   │   ├── security-baseline/
-│   │   │   │   └── page-001.md
-│   │   │   ├── test-strategy/
-│   │   │   │   └── page-001.md
-│   │   │   ├── workflow/
-│   │   │   │   └── page-001.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── _system/
-│   │   ├── authority.md
-│   │   ├── bootstrap.md
-│   │   ├── change-impact.md
-│   │   ├── checksums.sha256
-│   │   ├── collections.json
-│   │   ├── commands.json
-│   │   ├── configuration-guide.md
-│   │   ├── conventions.md
-│   │   ├── definition-of-done.md
-│   │   ├── directory-tree.txt
-│   │   ├── execution-policy.md
-│   │   ├── handover-test.md
-│   │   ├── lifecycle.md
-│   │   ├── original-document-map.md
-│   │   ├── project-map.json
-│   │   ├── README.md
-│   │   ├── routes.json
-│   │   ├── sources.md
-│   │   ├── template-catalog.md
-│   │   ├── tool-adapters.md
-│   │   └── validation-report.md
-│   ├── _tools/
-│   │   ├── docctl.py
-│   │   ├── README.md
-│   │   └── test_docctl.py
-│   ├── archive/
-│   │   ├── records/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── automation/
-│   │   ├── adapters/
-│   │   │   ├── _claude.template.md
-│   │   │   ├── _copilot.template.md
-│   │   │   ├── _local-agents.template.md
-│   │   │   └── README.md
-│   │   ├── skills/
-│   │   │   ├── _template/
-│   │   │   │   └── SKILL.md
-│   │   │   └── README.md
-│   │   ├── workflows/
-│   │   │   ├── _template.md
-│   │   │   ├── docs-audit.md
-│   │   │   ├── fix-bug.md
-│   │   │   ├── implement-feature.md
-│   │   │   ├── incident.md
-│   │   │   ├── README.md
-│   │   │   └── release.md
-│   │   └── README.md
-│   ├── business/
-│   │   ├── assumptions/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── pricing/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── model.md
-│   │   └── README.md
-│   ├── contracts/
-│   │   ├── api/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── errors/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── events/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── db/
-│   │   ├── entities/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── lifecycle/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── migrations/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── overview.md
-│   │   └── README.md
-│   ├── design/
-│   │   ├── assets/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── components/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── tokens/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── principles.md
-│   │   └── README.md
-│   ├── engineering/
-│   │   ├── adrs/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── architecture/
-│   │   │   ├── modules/
-│   │   │   │   ├── _template.md
-│   │   │   │   └── README.md
-│   │   │   ├── overview.md
-│   │   │   └── README.md
-│   │   ├── dependencies/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── development/
-│   │   │   ├── guides/
-│   │   │   │   ├── _template.md
-│   │   │   │   └── README.md
-│   │   │   ├── conventions.md
-│   │   │   ├── quickstart.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── legal/
-│   │   ├── privacy/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── refunds/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── terms/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── marketing/
-│   │   ├── campaigns/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── content/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── copy/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── seo/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── positioning.md
-│   │   └── README.md
-│   ├── operations/
-│   │   ├── backup/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── configuration/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── costs/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── deployment/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── environments/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── incidents/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── observability/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── runbooks/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── services/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── product/
-│   │   ├── experiments/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── features/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── journeys/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── metrics/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── pages/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── roadmap/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── project/
-│   │   ├── glossary/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── overview.md
-│   │   └── README.md
-│   ├── releases/
-│   │   ├── checklists/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── entries/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── research/
-│   │   ├── competitors/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── feedback/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── interviews/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── studies/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── security/
-│   │   ├── controls/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── findings/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── threat-models/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── access-control.md
-│   │   ├── baseline.md
-│   │   ├── README.md
-│   │   └── secrets.md
-│   ├── support/
-│   │   ├── cases/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── faq/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── tests/
-│   │   ├── cases/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── fixtures/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── reports/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── suites/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── README.md
-│   │   └── strategy.md
-│   ├── work/
-│   │   ├── approvals/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── items/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── logs/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── plans/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   ├── reviews/
-│   │   │   ├── _template.md
-│   │   │   └── README.md
-│   │   └── README.md
-│   ├── AGENTS.md
-│   └── README.md
-├── AGENTS.md
-└── README.md
+# 本参考包的实际文件快照；业务分类词典见 collections.json，目标项目按需实例化。
+_AGENTS.md
+_README.md
+docs/_AGENTS.md
+docs/_README.md
+docs/_generated/README.md
+docs/_generated/catalog/README.md
+docs/_generated/indexes/README.md
+docs/_system/README.md
+docs/_system/authority.md
+docs/_system/bootstrap.md
+docs/_system/change-impact.md
+docs/_system/checksums.sha256
+docs/_system/collections.json
+docs/_system/commands.json
+docs/_system/configuration-guide.md
+docs/_system/conventions.md
+docs/_system/definition-of-done.md
+docs/_system/directory-tree.txt
+docs/_system/execution-policy.md
+docs/_system/handover-test.md
+docs/_system/lifecycle.md
+docs/_system/original-document-map.md
+docs/_system/project-map.json
+docs/_system/routes.json
+docs/_system/sources.md
+docs/_system/template-catalog.md
+docs/_system/tool-adapters.md
+docs/_system/validation-report.md
+docs/_system/writing-policy.md
+docs/_templates/README.md
+docs/_templates/adr.md
+docs/_templates/api.md
+docs/_templates/approval.md
+docs/_templates/archive-record.md
+docs/_templates/assumption.md
+docs/_templates/backup-plan.md
+docs/_templates/campaign.md
+docs/_templates/competitor.md
+docs/_templates/component.md
+docs/_templates/config.md
+docs/_templates/content.md
+docs/_templates/copy.md
+docs/_templates/cost-period.md
+docs/_templates/data-lifecycle.md
+docs/_templates/dependency.md
+docs/_templates/deployment.md
+docs/_templates/design-asset.md
+docs/_templates/dev-guide.md
+docs/_templates/entity.md
+docs/_templates/environment.md
+docs/_templates/error.md
+docs/_templates/event.md
+docs/_templates/experiment.md
+docs/_templates/faq.md
+docs/_templates/feature.md
+docs/_templates/feedback.md
+docs/_templates/fixture.md
+docs/_templates/incident.md
+docs/_templates/interview.md
+docs/_templates/journey.md
+docs/_templates/metric.md
+docs/_templates/migration.md
+docs/_templates/module.md
+docs/_templates/page.md
+docs/_templates/plan.md
+docs/_templates/pricing.md
+docs/_templates/privacy.md
+docs/_templates/reference/archive/README.md
+docs/_templates/reference/archive/records/README.md
+docs/_templates/reference/automation/README.md
+docs/_templates/reference/automation/adapters/README.md
+docs/_templates/reference/automation/adapters/_claude.template.md
+docs/_templates/reference/automation/adapters/_copilot.template.md
+docs/_templates/reference/automation/adapters/_local-agents.template.md
+docs/_templates/reference/automation/skills/README.md
+docs/_templates/reference/automation/skills/_template/SKILL.md
+docs/_templates/reference/automation/workflows/README.md
+docs/_templates/reference/automation/workflows/docs-audit.md
+docs/_templates/reference/automation/workflows/fix-bug.md
+docs/_templates/reference/automation/workflows/implement-feature.md
+docs/_templates/reference/automation/workflows/incident.md
+docs/_templates/reference/automation/workflows/release.md
+docs/_templates/reference/business/README.md
+docs/_templates/reference/business/assumptions/README.md
+docs/_templates/reference/business/model.md
+docs/_templates/reference/business/pricing/README.md
+docs/_templates/reference/contracts/README.md
+docs/_templates/reference/contracts/api/README.md
+docs/_templates/reference/contracts/errors/README.md
+docs/_templates/reference/contracts/events/README.md
+docs/_templates/reference/db/README.md
+docs/_templates/reference/db/entities/README.md
+docs/_templates/reference/db/lifecycle/README.md
+docs/_templates/reference/db/migrations/README.md
+docs/_templates/reference/db/overview.md
+docs/_templates/reference/design/README.md
+docs/_templates/reference/design/assets/README.md
+docs/_templates/reference/design/components/README.md
+docs/_templates/reference/design/principles.md
+docs/_templates/reference/design/tokens/README.md
+docs/_templates/reference/engineering/README.md
+docs/_templates/reference/engineering/adrs/README.md
+docs/_templates/reference/engineering/architecture/README.md
+docs/_templates/reference/engineering/architecture/modules/README.md
+docs/_templates/reference/engineering/architecture/overview.md
+docs/_templates/reference/engineering/dependencies/README.md
+docs/_templates/reference/engineering/development/README.md
+docs/_templates/reference/engineering/development/conventions.md
+docs/_templates/reference/engineering/development/guides/README.md
+docs/_templates/reference/engineering/development/quickstart.md
+docs/_templates/reference/legal/README.md
+docs/_templates/reference/legal/privacy/README.md
+docs/_templates/reference/legal/refunds/README.md
+docs/_templates/reference/legal/terms/README.md
+docs/_templates/reference/marketing/README.md
+docs/_templates/reference/marketing/campaigns/README.md
+docs/_templates/reference/marketing/content/README.md
+docs/_templates/reference/marketing/copy/README.md
+docs/_templates/reference/marketing/positioning.md
+docs/_templates/reference/marketing/seo/README.md
+docs/_templates/reference/operations/README.md
+docs/_templates/reference/operations/backup/README.md
+docs/_templates/reference/operations/configuration/README.md
+docs/_templates/reference/operations/costs/README.md
+docs/_templates/reference/operations/deployment/README.md
+docs/_templates/reference/operations/environments/README.md
+docs/_templates/reference/operations/incidents/README.md
+docs/_templates/reference/operations/observability/README.md
+docs/_templates/reference/operations/runbooks/README.md
+docs/_templates/reference/operations/services/README.md
+docs/_templates/reference/product/README.md
+docs/_templates/reference/product/experiments/README.md
+docs/_templates/reference/product/features/README.md
+docs/_templates/reference/product/journeys/README.md
+docs/_templates/reference/product/metrics/README.md
+docs/_templates/reference/product/pages/README.md
+docs/_templates/reference/product/roadmap/README.md
+docs/_templates/reference/project/README.md
+docs/_templates/reference/project/glossary/README.md
+docs/_templates/reference/project/overview.md
+docs/_templates/reference/releases/README.md
+docs/_templates/reference/releases/checklists/README.md
+docs/_templates/reference/releases/entries/README.md
+docs/_templates/reference/research/README.md
+docs/_templates/reference/research/competitors/README.md
+docs/_templates/reference/research/feedback/README.md
+docs/_templates/reference/research/interviews/README.md
+docs/_templates/reference/research/studies/README.md
+docs/_templates/reference/security/README.md
+docs/_templates/reference/security/access-control.md
+docs/_templates/reference/security/baseline.md
+docs/_templates/reference/security/controls/README.md
+docs/_templates/reference/security/findings/README.md
+docs/_templates/reference/security/secrets.md
+docs/_templates/reference/security/threat-models/README.md
+docs/_templates/reference/support/README.md
+docs/_templates/reference/support/cases/README.md
+docs/_templates/reference/support/faq/README.md
+docs/_templates/reference/tests/README.md
+docs/_templates/reference/tests/cases/README.md
+docs/_templates/reference/tests/fixtures/README.md
+docs/_templates/reference/tests/reports/README.md
+docs/_templates/reference/tests/strategy.md
+docs/_templates/reference/tests/suites/README.md
+docs/_templates/reference/work/README.md
+docs/_templates/reference/work/approvals/README.md
+docs/_templates/reference/work/items/README.md
+docs/_templates/reference/work/logs/README.md
+docs/_templates/reference/work/plans/README.md
+docs/_templates/reference/work/reviews/README.md
+docs/_templates/refund-policy.md
+docs/_templates/release-checklist.md
+docs/_templates/release.md
+docs/_templates/review.md
+docs/_templates/roadmap.md
+docs/_templates/runbook.md
+docs/_templates/security-control.md
+docs/_templates/security-finding.md
+docs/_templates/seo.md
+docs/_templates/service.md
+docs/_templates/signal.md
+docs/_templates/study.md
+docs/_templates/support-case.md
+docs/_templates/task.md
+docs/_templates/term.md
+docs/_templates/terms.md
+docs/_templates/test-case.md
+docs/_templates/test-report.md
+docs/_templates/test-suite.md
+docs/_templates/threat-model.md
+docs/_templates/token.md
+docs/_templates/workflow.md
+docs/_templates/worklog.md
+docs/_tools/README.md
+docs/_tools/docctl.py
+docs/_tools/init_docs.py
+docs/_tools/test_docctl.py

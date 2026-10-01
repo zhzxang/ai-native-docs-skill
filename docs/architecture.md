@@ -1,173 +1,60 @@
+# 自适应文档架构
 
+完整分类是内容归属词典，实际目录由已经发生的内容决定。参考包中的 60 类模板不是项目初始化清单；项目不需要预建业务目录、空集合、空 README 或完整占位文档。
 
-```
-project/
-├── README.md                           # 面向人的项目入口
-├── AGENTS.md                           # 面向 AI 的薄执行入口
-│
+## 参考包与项目目录
+
+本仓库的 `templates/` 保存可部署的入口、规则、工具和集中参考源：
+
+```text
+templates/
+├── _AGENTS.md                    # 安装后为 AGENTS.md
+├── _README.md                    # 安装后为 README.md
 └── docs/
-    ├── README.md                       # 任务路由与领域入口
-    ├── AGENTS.md                       # 文档编辑规则
-    │
-    ├── _system/                        # 文档体系本身的规则与配置
-    │   ├── README.md
-    │   ├── bootstrap.md                # 初始化与迁移步骤
-    │   ├── original-document-map.md    # 原始 35 类文档迁移对照
-    │   ├── template-catalog.md         # 60 种条目模板目录
-    │   ├── configuration-guide.md      # 映射、命令、路由的字段说明
-    │   ├── conventions.md             # 命名、元数据、状态、ID
-    │   ├── authority.md               # 权威来源与冲突处理
-    │   ├── lifecycle.md               # 增长、分页、替代、归档
-    │   ├── change-impact.md           # 变更影响检查
-    │   ├── definition-of-done.md      # 完成与交付判定
-    │   ├── execution-policy.md        # AI 执行授权与停止条件
-    │   ├── handover-test.md           # 无历史会话交接演练
-    │   ├── tool-adapters.md           # 不同 Agent 客户端的适配
-    │   ├── sources.md                 # 公开规范来源
-    │   ├── project-map.json           # 实际代码与外部系统位置
-    │   ├── commands.json              # 实际命令、环境、副作用与证据
-    │   ├── routes.json                # 按任务读取与回写的路由
-    │   ├── collections.json           # 集合、模板、ID 前缀与分页配置
-    │   ├── directory-tree.txt         # 本次交付的实际目录快照
-    │   ├── validation-report.md       # 本次交付的验证记录
-    │   └── checksums.sha256            # 文件完整性校验
-    │
-    ├── _tools/                         # 文档工具，不是项目业务代码
-    │   ├── README.md
-    │   ├── docctl.py                   # 创建、检索、检查、生成索引
-    │   └── test_docctl.py              # 文档工具自身的测试
-    │
-    ├── _generated/                     # 可重建的派生物
-    │   ├── README.md
-    │   ├── indexes/
-    │   │   ├── README.md
-    │   │   └── <type>/page-NNN.md      # 人可读分页索引
-    │   └── catalog/
-    │       ├── README.md
-    │       └── <type>/page-NNN.json    # 机器分页索引
-    │
-    ├── project/                        # 项目级知识
-    │   ├── overview.md                 # 项目总纲：用户、目标、边界
-    │   └── glossary/          〔集合〕 # 一个业务术语一份
-    │
-    ├── product/                        # 产品目标行为
-    │   ├── roadmap/           〔集合〕 # 一个阶段或规划窗口一份
-    │   ├── features/          〔集合〕 # 一个功能 PRD 一份
-    │   ├── journeys/          〔集合〕 # 一个用户流程一份
-    │   ├── pages/             〔集合〕 # 一个页面或导航节点一份
-    │   ├── metrics/           〔集合〕 # 一个指标定义一份
-    │   └── experiments/       〔集合〕 # 一次产品实验一份
-    │
-    ├── design/                         # 设计意图与资产
-    │   ├── principles.md               # 有界的设计原则与来源说明
-    │   ├── tokens/            〔集合〕 # 一组语义化 Tokens 一份
-    │   ├── components/        〔集合〕 # 一个组件规范一份
-    │   └── assets/            〔集合〕 # 一个 Figma 等设计资产一份
-    │
-    ├── engineering/                    # 工程知识
-    │   ├── architecture/
-    │   │   ├── overview.md             # 有界的系统架构总览
-    │   │   └── modules/       〔集合〕 # 一个逻辑模块一份
-    │   ├── adrs/              〔集合〕 # 一个重要技术决策一份
-    │   ├── dependencies/      〔集合〕 # 一个关键技术依赖一份
-    │   └── development/
-    │       ├── quickstart.md           # 环境准备、启动与验证入口
-    │       ├── conventions.md         # 项目特有开发约定
-    │       └── guides/        〔集合〕 # 一个开发专题指南一份
-    │
-    ├── contracts/                      # 全部是契约说明，不约束代码布局
-    │   ├── api/               〔集合〕 # 一个 API 操作或内聚接口组一份
-    │   ├── events/            〔集合〕 # 一个事件、埋点或 Webhook 一份
-    │   └── errors/            〔集合〕 # 一个错误码或错误类别一份
-    │
-    ├── db/                             # 全部是数据设计与迁移说明
-    │   ├── overview.md                 # 数据域、来源与关系总览
-    │   ├── entities/          〔集合〕 # 一个实体或表一份
-    │   ├── migrations/        〔集合〕 # 一次迁移方案一份
-    │   └── lifecycle/         〔集合〕 # 一类数据的生命周期一份
-    │
-    ├── tests/                          # 全部是测试知识与执行证据
-    │   ├── strategy.md                 # 有界的测试策略
-    │   ├── cases/             〔集合〕 # 一个测试用例一份
-    │   ├── suites/            〔集合〕 # 一个测试或回归集合一份
-    │   ├── fixtures/          〔集合〕 # 一组测试数据说明一份
-    │   └── reports/           〔集合〕 # 一次实际测试运行一份
-    │
-    ├── operations/                     # 环境与运行维护
-    │   ├── environments/      〔集合〕 # 一个运行环境一份
-    │   ├── configuration/     〔集合〕 # 一个内聚配置组一份
-    │   ├── services/          〔集合〕 # 一个第三方服务一份
-    │   ├── deployment/        〔集合〕 # 一种部署目标或方式一份
-    │   ├── runbooks/          〔集合〕 # 一种可独立处置的故障一份
-    │   ├── incidents/         〔集合〕 # 一次真实事故一份
-    │   ├── observability/     〔集合〕 # 一个监测信号或告警一份
-    │   ├── costs/             〔集合〕 # 一个结算周期一份
-    │   └── backup/            〔集合〕 # 一类资产的备份恢复方案一份
-    │
-    ├── releases/                       # 发布程序与实际版本历史
-    │   ├── checklists/        〔集合〕 # 一种发布类型的检查程序一份
-    │   └── entries/           〔集合〕 # 一个版本或发布事件一份
-    │
-    ├── business/                       # 商业知识
-    │   ├── model.md                    # 有界的当前商业模式
-    │   ├── assumptions/       〔集合〕 # 一个商业假设一份
-    │   └── pricing/           〔集合〕 # 一个定价生效版本一份
-    │
-    ├── marketing/                      # 营销知识与内容
-    │   ├── positioning.md              # 有界的定位与表达原则
-    │   ├── campaigns/         〔集合〕 # 一次营销活动一份
-    │   ├── copy/              〔集合〕 # 一个用途的文案一份
-    │   ├── seo/               〔集合〕 # 一个搜索主题或页面群一份
-    │   └── content/           〔集合〕 # 一篇内容或独立发布条目一份
-    │
-    ├── support/                        # 用户支持
-    │   ├── faq/               〔集合〕 # 一个问题及标准回答一份
-    │   └── cases/             〔集合〕 # 一个脱敏客服问题一份
-    │
-    ├── legal/                          # 对外政策与条款版本
-    │   ├── privacy/           〔集合〕 # 一个隐私政策版本一份
-    │   ├── terms/             〔集合〕 # 一个服务条款版本一份
-    │   └── refunds/           〔集合〕 # 一个退款/取消规则版本一份
-    │
-    ├── security/                       # 安全知识
-    │   ├── baseline.md                 # 有界的安全基线
-    │   ├── access-control.md           # 有界的鉴权与权限模型
-    │   ├── secrets.md                  # 有界的密钥管理规则
-    │   ├── threat-models/     〔集合〕 # 一个系统或流程的威胁模型一份
-    │   ├── controls/          〔集合〕 # 一个安全控制一份
-    │   └── findings/          〔集合〕 # 一个安全发现一份
-    │
-    ├── research/                       # 证据，不是执行指令
-    │   ├── feedback/          〔集合〕 # 一条内聚反馈一份
-    │   ├── interviews/        〔集合〕 # 一次用户访谈一份
-    │   ├── competitors/       〔集合〕 # 一个竞品的时间点快照一份
-    │   └── studies/           〔集合〕 # 一次专题或市场研究一份
-    │
-    ├── work/                           # 执行与跨会话交接
-    │   ├── items/             〔集合〕 # 任务、Bug、技术债的唯一状态源
-    │   ├── plans/             〔集合〕 # 一个复杂任务的执行计划一份
-    │   ├── logs/              〔集合〕 # 一次会话或工作窗口一份
-    │   ├── reviews/           〔集合〕 # 一次复盘一份
-    │   └── approvals/         〔集合〕 # 一次批准或限定预授权一份
-    │
-    ├── automation/                     # 可复用流程与未安装的工具适配
-    │   ├── workflows/         〔集合〕
-    │   │   ├── implement-feature.md    # 功能实现流程
-    │   │   ├── fix-bug.md              # Bug 修复流程
-    │   │   ├── release.md              # 发布流程
-    │   │   ├── incident.md             # 事故处置流程
-    │   │   └── docs-audit.md           # 文档检查流程
-    │   ├── adapters/
-    │   │   ├── README.md
-    │   │   ├── _claude.template.md
-    │   │   ├── _copilot.template.md
-    │   │   └── _local-agents.template.md
-    │   └── skills/
-    │       ├── README.md
-    │       └── _template/
-    │           └── SKILL.md
-    │
-    └── archive/                        # 不进入默认任务上下文
-        ├── README.md
-        └── records/           〔集合〕 # 一次归档迁移及路径映射一份
+    ├── _AGENTS.md                # 安装后为 docs/AGENTS.md
+    ├── _README.md                # 安装后为 docs/README.md
+    ├── _system/                  # 协议、逻辑分类、路由与真实位置配置
+    │   ├── writing-policy.md
+    │   ├── collections.json      # schema_version 2
+    │   └── routes.json           # 通过 collection key 解析当前布局
+    ├── _tools/                   # init_docs.py、docctl.py 与工具测试
+    └── _templates/               # 参考源，默认不作为项目事实或索引条目
+        ├── <key>.md              # 60 类条目的最小充分结构
+        └── reference/            # 按需参考的领域说明、单例和工作流
 ```
+
+`init_docs.py` 默认只部署入口、协议、工具和集中参考源，不实例化业务目录或索引。明确提供项目标题与摘要时才创建总纲草案。具体项目内容确认后，按协议创建所需单例和集合；集中参考源不能被解释为已生效的项目规范。
+
+## 集合状态
+
+| 内容情况 | 项目中的物理结构 | 动作 |
+|---|---|---|
+| 没有条目 | 不存在业务文件或集合目录 | 不预建空壳 |
+| 第 1 条 | `<base_path>.md` | 创建紧凑文件 |
+| 第 2 条 | 同一紧凑文件 | 增加独立 ID、元数据和正文 |
+| 第 3 条 | `<base_path>/ID-slug.md` | 同一变更内迁移原条目并修复引用 |
+| 已展开 | 保持目录 | 更新或新增条目，不自动收拢 |
+
+独立条目是可以独立命名、检索和维护的对象。背景、规则、验收条件、章节、段落和编辑次数均不增加条目数。业务分类目录不受该阈值控制：写第一条功能需求时可以创建 `product/`，但集合 `features/` 到第 3 条才创建。
+
+```text
+第 1–2 个功能                    第 3 个功能及之后
+docs/product/features.md   →    docs/product/features/
+                                 ├── FEAT-001-login.md
+                                 ├── FEAT-002-bookmarks.md
+                                 └── FEAT-003-search.md
+```
+
+## 写入和迁移
+
+所有需求、研究、反馈、成本、运行记录、开发回写和交接写入都从根入口触发：读取详细协议与注册表，先查同主题条目，已有优先更新，新对象才创建 ID。纯聊天、临时草稿和工具缓存不强制归档。
+
+每条保留类型对应的最小充分内容。原始证据、已批准规范和执行程序职责分开，影响正确性、授权或验收的未知项必须明确保留。单文件中各条使用独立 `yaml doc-meta`；展开后转换为 front matter，保留 ID、状态、范围、证据和稳定锚点。
+
+迁移还需修复入链、出链、附件关系、路由和必要索引。聚合文件与展开目录不能同时保存权威正文；外部旧链接确需保留时，仅留明确标记的薄跳转页。结构检查在迁移完成后验证最终状态，不把合法中间状态当作最终交付。
+
+## 定位和门禁
+
+`collections.json` 唯一登记逻辑类别、基础路径、计数单位、最小内容和阈值，不手工保存条目数量。`routes.json` 引用集合 key，`route` 按当前文件或目录解析，缺失资料提示缺口而不创建。`find` 和 `index` 可以定位同一文件内的多个条目及各自锚点。
+
+`check` 验证声明与结构，`check --strict` 检查项目配置就绪。结构检查不证明业务判断正确，也不阻止工作区中的直接文件写入。实际项目可以接入 CI 和受保护分支，但模板更新本身没有安装客户端 Hook 或启用合并保护。

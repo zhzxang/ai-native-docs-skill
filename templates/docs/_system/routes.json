@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "note": "项目自定义路由元数据，不会被所有 Agent 客户端自动执行。README 和 AGENTS.md 引导执行者显式使用。每条路由只展开匹配的具体条目，不读取全部模板。",
+  "schema_version": 2,
+  "note": "项目自定义路由，需由入口显式调用。collection 按注册表解析现有紧凑文件或展开目录；不存在时返回知识缺口与计划路径，不预建文件。optional_path 表示该业务文档按需存在，缺失时仍需记录必需知识缺口，不视为事实或执行条件已满足。只读取匹配的有效条目；写入先读取 writing-policy 并查重。",
   "routes": [
     {
       "id": "orientation",
@@ -12,14 +12,20 @@
         "orientation"
       ],
       "must_read": [
-        "docs/project/overview.md",
-        "docs/engineering/development/quickstart.md"
+        {
+          "optional_path": "docs/project/overview.md"
+        },
+        {
+          "optional_path": "docs/engineering/development/quickstart.md"
+        }
       ],
       "read_when": [
         {
           "condition": "需要了解系统边界",
           "paths": [
-            "docs/engineering/architecture/overview.md"
+            {
+              "optional_path": "docs/engineering/architecture/overview.md"
+            }
           ]
         }
       ],
@@ -34,37 +40,79 @@
         "需求"
       ],
       "must_read": [
-        "docs/product/features/README.md",
-        "docs/tests/strategy.md",
-        "docs/work/items/README.md"
+        {
+          "collection": "feature"
+        },
+        {
+          "optional_path": "docs/tests/strategy.md"
+        },
+        {
+          "collection": "task"
+        }
       ],
       "read_when": [
         {
           "condition": "跨模块边界",
           "paths": [
-            "docs/engineering/architecture/overview.md"
+            {
+              "optional_path": "docs/engineering/architecture/overview.md"
+            }
           ]
         },
         {
           "condition": "涉及用户界面",
           "paths": [
-            "docs/design/README.md",
-            "docs/product/pages/README.md"
+            {
+              "collection": "token"
+            },
+            {
+              "collection": "component"
+            },
+            {
+              "collection": "design-asset"
+            },
+            {
+              "collection": "page"
+            }
           ]
         },
         {
           "condition": "涉及接口、数据或权限",
           "paths": [
-            "docs/contracts/README.md",
-            "docs/db/README.md",
-            "docs/security/access-control.md"
+            {
+              "collection": "api"
+            },
+            {
+              "collection": "event"
+            },
+            {
+              "collection": "error"
+            },
+            {
+              "collection": "entity"
+            },
+            {
+              "collection": "migration"
+            },
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "optional_path": "docs/security/access-control.md"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/product/features/README.md",
-        "docs/tests/cases/README.md",
-        "docs/work/items/README.md"
+        {
+          "collection": "feature"
+        },
+        {
+          "collection": "test-case"
+        },
+        {
+          "collection": "task"
+        }
       ]
     },
     {
@@ -76,23 +124,39 @@
         "修复"
       ],
       "must_read": [
-        "docs/work/items/README.md",
-        "docs/product/features/README.md",
-        "docs/tests/strategy.md"
+        {
+          "collection": "task"
+        },
+        {
+          "collection": "feature"
+        },
+        {
+          "optional_path": "docs/tests/strategy.md"
+        }
       ],
       "read_when": [
         {
           "condition": "线上问题",
           "paths": [
-            "docs/operations/runbooks/README.md",
-            "docs/operations/incidents/README.md"
+            {
+              "collection": "runbook"
+            },
+            {
+              "collection": "incident"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/tests/cases/README.md",
-        "docs/tests/reports/README.md",
-        "docs/work/items/README.md"
+        {
+          "collection": "test-case"
+        },
+        {
+          "collection": "test-report"
+        },
+        {
+          "collection": "task"
+        }
       ]
     },
     {
@@ -105,28 +169,44 @@
         "交互"
       ],
       "must_read": [
-        "docs/design/principles.md",
-        "docs/product/pages/README.md",
-        "docs/design/components/README.md"
+        {
+          "optional_path": "docs/design/principles.md"
+        },
+        {
+          "collection": "page"
+        },
+        {
+          "collection": "component"
+        }
       ],
       "read_when": [
         {
           "condition": "跨功能路径",
           "paths": [
-            "docs/product/journeys/README.md"
+            {
+              "collection": "journey"
+            }
           ]
         },
         {
           "condition": "外部设计核验",
           "paths": [
-            "docs/design/assets/README.md"
+            {
+              "collection": "design-asset"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/product/pages/README.md",
-        "docs/design/components/README.md",
-        "docs/tests/cases/README.md"
+        {
+          "collection": "page"
+        },
+        {
+          "collection": "component"
+        },
+        {
+          "collection": "test-case"
+        }
       ]
     },
     {
@@ -139,23 +219,51 @@
         "webhook"
       ],
       "must_read": [
-        "docs/contracts/README.md",
-        "docs/security/access-control.md",
-        "docs/tests/strategy.md"
+        {
+          "collection": "api"
+        },
+        {
+          "collection": "event"
+        },
+        {
+          "collection": "error"
+        },
+        {
+          "optional_path": "docs/security/access-control.md"
+        },
+        {
+          "optional_path": "docs/tests/strategy.md"
+        }
       ],
       "read_when": [
         {
           "condition": "影响数据库或第三方",
           "paths": [
-            "docs/db/README.md",
-            "docs/operations/services/README.md"
+            {
+              "collection": "entity"
+            },
+            {
+              "collection": "migration"
+            },
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "collection": "service"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/contracts/api/README.md",
-        "docs/contracts/events/README.md",
-        "docs/tests/cases/README.md"
+        {
+          "collection": "api"
+        },
+        {
+          "collection": "event"
+        },
+        {
+          "collection": "test-case"
+        }
       ]
     },
     {
@@ -168,29 +276,45 @@
         "database"
       ],
       "must_read": [
-        "docs/db/overview.md",
-        "docs/db/migrations/README.md",
-        "docs/db/lifecycle/README.md"
+        {
+          "optional_path": "docs/db/overview.md"
+        },
+        {
+          "collection": "migration"
+        },
+        {
+          "collection": "data-lifecycle"
+        }
       ],
       "read_when": [
         {
           "condition": "涉及生产或恢复",
           "paths": [
             "docs/_system/execution-policy.md",
-            "docs/operations/backup/README.md"
+            {
+              "collection": "backup-plan"
+            }
           ]
         },
         {
           "condition": "改变收集、保留或删除",
           "paths": [
-            "docs/legal/privacy/README.md"
+            {
+              "collection": "privacy"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/db/entities/README.md",
-        "docs/db/migrations/README.md",
-        "docs/tests/reports/README.md"
+        {
+          "collection": "entity"
+        },
+        {
+          "collection": "migration"
+        },
+        {
+          "collection": "test-report"
+        }
       ]
     },
     {
@@ -204,32 +328,56 @@
         "退款"
       ],
       "must_read": [
-        "docs/product/features/README.md",
-        "docs/business/pricing/README.md",
-        "docs/legal/refunds/README.md",
-        "docs/security/access-control.md"
+        {
+          "collection": "feature"
+        },
+        {
+          "collection": "pricing"
+        },
+        {
+          "collection": "refund-policy"
+        },
+        {
+          "optional_path": "docs/security/access-control.md"
+        }
       ],
       "read_when": [
         {
           "condition": "涉及回调或第三方状态",
           "paths": [
-            "docs/contracts/events/README.md",
-            "docs/operations/services/README.md"
+            {
+              "collection": "event"
+            },
+            {
+              "collection": "service"
+            }
           ]
         },
         {
           "condition": "涉及展示与通知",
           "paths": [
-            "docs/support/faq/README.md",
-            "docs/marketing/copy/README.md"
+            {
+              "collection": "faq"
+            },
+            {
+              "collection": "copy"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/product/features/README.md",
-        "docs/tests/cases/README.md",
-        "docs/business/pricing/README.md",
-        "docs/support/faq/README.md"
+        {
+          "collection": "feature"
+        },
+        {
+          "collection": "test-case"
+        },
+        {
+          "collection": "pricing"
+        },
+        {
+          "collection": "faq"
+        }
       ]
     },
     {
@@ -242,23 +390,35 @@
         "environment"
       ],
       "must_read": [
-        "docs/operations/environments/README.md",
-        "docs/operations/configuration/README.md",
-        "docs/security/secrets.md"
+        {
+          "collection": "environment"
+        },
+        {
+          "collection": "config"
+        },
+        {
+          "optional_path": "docs/security/secrets.md"
+        }
       ],
       "read_when": [
         {
           "condition": "涉及外部服务或费用",
           "paths": [
-            "docs/operations/services/README.md",
-            "docs/operations/costs/README.md"
+            {
+              "collection": "service"
+            },
+            {
+              "collection": "cost-period"
+            }
           ]
         }
       ],
       "write_back": [
         "docs/_system/project-map.json",
         "docs/_system/commands.json",
-        "docs/operations/configuration/README.md"
+        {
+          "collection": "config"
+        }
       ]
     },
     {
@@ -272,28 +432,50 @@
       ],
       "must_read": [
         "docs/_system/execution-policy.md",
-        "docs/releases/checklists/README.md",
-        "docs/operations/deployment/README.md",
-        "docs/releases/entries/README.md"
+        {
+          "collection": "release-checklist"
+        },
+        {
+          "collection": "deployment"
+        },
+        {
+          "collection": "release"
+        }
       ],
       "read_when": [
         {
           "condition": "包含数据库变化",
           "paths": [
-            "docs/db/migrations/README.md"
+            {
+              "collection": "migration"
+            }
           ]
         },
         {
           "condition": "包含用户承诺变化",
           "paths": [
-            "docs/legal/README.md",
-            "docs/business/pricing/README.md"
+            {
+              "collection": "privacy"
+            },
+            {
+              "collection": "terms"
+            },
+            {
+              "collection": "refund-policy"
+            },
+            {
+              "collection": "pricing"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/releases/entries/README.md",
-        "docs/tests/reports/README.md"
+        {
+          "collection": "release"
+        },
+        {
+          "collection": "test-report"
+        }
       ]
     },
     {
@@ -307,27 +489,47 @@
       ],
       "must_read": [
         "docs/_system/execution-policy.md",
-        "docs/operations/runbooks/README.md",
-        "docs/operations/incidents/README.md"
+        {
+          "collection": "runbook"
+        },
+        {
+          "collection": "incident"
+        }
       ],
       "read_when": [
         {
           "condition": "外部服务故障",
           "paths": [
-            "docs/operations/services/README.md"
+            {
+              "collection": "service"
+            }
           ]
         },
         {
           "condition": "安全事故",
           "paths": [
-            "docs/security/README.md"
+            {
+              "collection": "threat-model"
+            },
+            {
+              "collection": "security-control"
+            },
+            {
+              "collection": "security-finding"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/operations/incidents/README.md",
-        "docs/work/reviews/README.md",
-        "docs/work/items/README.md"
+        {
+          "collection": "incident"
+        },
+        {
+          "collection": "review"
+        },
+        {
+          "collection": "task"
+        }
       ]
     },
     {
@@ -340,28 +542,44 @@
         "metrics"
       ],
       "must_read": [
-        "docs/product/metrics/README.md",
-        "docs/contracts/events/README.md"
+        {
+          "collection": "metric"
+        },
+        {
+          "collection": "event"
+        }
       ],
       "read_when": [
         {
           "condition": "收集或处理个人数据",
           "paths": [
-            "docs/db/lifecycle/README.md",
-            "docs/legal/privacy/README.md"
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "collection": "privacy"
+            }
           ]
         },
         {
           "condition": "开展实验",
           "paths": [
-            "docs/product/experiments/README.md"
+            {
+              "collection": "experiment"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/product/metrics/README.md",
-        "docs/contracts/events/README.md",
-        "docs/product/experiments/README.md"
+        {
+          "collection": "metric"
+        },
+        {
+          "collection": "event"
+        },
+        {
+          "collection": "experiment"
+        }
       ]
     },
     {
@@ -375,28 +593,53 @@
         "business"
       ],
       "must_read": [
-        "docs/project/overview.md",
-        "docs/business/model.md",
-        "docs/research/README.md"
+        {
+          "optional_path": "docs/project/overview.md"
+        },
+        {
+          "optional_path": "docs/business/model.md"
+        },
+        {
+          "collection": "feedback"
+        },
+        {
+          "collection": "interview"
+        },
+        {
+          "collection": "competitor"
+        },
+        {
+          "collection": "study"
+        }
       ],
       "read_when": [
         {
           "condition": "阶段取舍",
           "paths": [
-            "docs/product/roadmap/README.md"
+            {
+              "collection": "roadmap"
+            }
           ]
         },
         {
           "condition": "定价决策",
           "paths": [
-            "docs/business/pricing/README.md"
+            {
+              "collection": "pricing"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/business/assumptions/README.md",
-        "docs/product/roadmap/README.md",
-        "docs/research/studies/README.md"
+        {
+          "collection": "assumption"
+        },
+        {
+          "collection": "roadmap"
+        },
+        {
+          "collection": "study"
+        }
       ]
     },
     {
@@ -409,17 +652,35 @@
         "marketing"
       ],
       "must_read": [
-        "docs/marketing/positioning.md",
-        "docs/marketing/copy/README.md",
-        "docs/marketing/content/README.md"
+        {
+          "optional_path": "docs/marketing/positioning.md"
+        },
+        {
+          "collection": "copy"
+        },
+        {
+          "collection": "content"
+        }
       ],
       "read_when": [
         {
           "condition": "包含功能、价格或政策承诺",
           "paths": [
-            "docs/product/features/README.md",
-            "docs/business/pricing/README.md",
-            "docs/legal/README.md"
+            {
+              "collection": "feature"
+            },
+            {
+              "collection": "pricing"
+            },
+            {
+              "collection": "privacy"
+            },
+            {
+              "collection": "terms"
+            },
+            {
+              "collection": "refund-policy"
+            }
           ]
         },
         {
@@ -430,8 +691,12 @@
         }
       ],
       "write_back": [
-        "docs/marketing/content/README.md",
-        "docs/marketing/campaigns/README.md"
+        {
+          "collection": "content"
+        },
+        {
+          "collection": "campaign"
+        }
       ]
     },
     {
@@ -443,23 +708,37 @@
         "support"
       ],
       "must_read": [
-        "docs/support/faq/README.md",
-        "docs/support/cases/README.md",
-        "docs/research/feedback/README.md"
+        {
+          "collection": "faq"
+        },
+        {
+          "collection": "support-case"
+        },
+        {
+          "collection": "feedback"
+        }
       ],
       "read_when": [
         {
           "condition": "订阅、退款或账户操作",
           "paths": [
-            "docs/legal/refunds/README.md",
+            {
+              "collection": "refund-policy"
+            },
             "docs/_system/execution-policy.md"
           ]
         }
       ],
       "write_back": [
-        "docs/support/cases/README.md",
-        "docs/research/feedback/README.md",
-        "docs/work/items/README.md"
+        {
+          "collection": "support-case"
+        },
+        {
+          "collection": "feedback"
+        },
+        {
+          "collection": "task"
+        }
       ]
     },
     {
@@ -472,7 +751,15 @@
         "legal"
       ],
       "must_read": [
-        "docs/legal/README.md",
+        {
+          "collection": "privacy"
+        },
+        {
+          "collection": "terms"
+        },
+        {
+          "collection": "refund-policy"
+        },
         "docs/_system/authority.md",
         "docs/_system/execution-policy.md"
       ],
@@ -480,21 +767,39 @@
         {
           "condition": "隐私与数据",
           "paths": [
-            "docs/db/lifecycle/README.md",
-            "docs/operations/services/README.md"
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "collection": "service"
+            }
           ]
         },
         {
           "condition": "收费与退款",
           "paths": [
-            "docs/business/pricing/README.md",
-            "docs/legal/refunds/README.md"
+            {
+              "collection": "pricing"
+            },
+            {
+              "collection": "refund-policy"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/legal/README.md",
-        "docs/releases/entries/README.md"
+        {
+          "collection": "privacy"
+        },
+        {
+          "collection": "terms"
+        },
+        {
+          "collection": "refund-policy"
+        },
+        {
+          "collection": "release"
+        }
       ]
     },
     {
@@ -506,29 +811,45 @@
         "security"
       ],
       "must_read": [
-        "docs/security/baseline.md",
-        "docs/security/access-control.md",
+        {
+          "optional_path": "docs/security/baseline.md"
+        },
+        {
+          "optional_path": "docs/security/access-control.md"
+        },
         "docs/_system/execution-policy.md"
       ],
       "read_when": [
         {
           "condition": "密钥相关",
           "paths": [
-            "docs/security/secrets.md"
+            {
+              "optional_path": "docs/security/secrets.md"
+            }
           ]
         },
         {
           "condition": "发现风险",
           "paths": [
-            "docs/security/findings/README.md",
-            "docs/security/threat-models/README.md"
+            {
+              "collection": "security-finding"
+            },
+            {
+              "collection": "threat-model"
+            }
           ]
         }
       ],
       "write_back": [
-        "docs/security/controls/README.md",
-        "docs/security/findings/README.md",
-        "docs/work/items/README.md"
+        {
+          "collection": "security-control"
+        },
+        {
+          "collection": "security-finding"
+        },
+        {
+          "collection": "task"
+        }
       ]
     },
     {
@@ -540,8 +861,10 @@
       ],
       "must_read": [
         "docs/AGENTS.md",
+        "docs/_system/writing-policy.md",
         "docs/_system/conventions.md",
-        "docs/_system/authority.md"
+        "docs/_system/authority.md",
+        "docs/_system/collections.json"
       ],
       "read_when": [
         {
@@ -559,8 +882,7 @@
         }
       ],
       "write_back": [
-        "docs/_system/routes.json",
-        "docs/_generated/README.md"
+        "docs/_system/routes.json"
       ]
     }
   ]

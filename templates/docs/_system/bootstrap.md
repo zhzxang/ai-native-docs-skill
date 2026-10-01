@@ -1,10 +1,19 @@
 # 初始化与迁移指南
 
 ## 先理解交付物
-这是一套技术栈无关的文档骨架，不包含你的业务事实，也不假设源码、测试、迁移或部署脚本位于某个目录。根目录保留人和 AI 的入口；所有项目说明放在 `docs/`。
+这是一套技术栈无关的分类规则和集中模板源，不包含你的业务事实，也不假设源码、测试、迁移或部署脚本位于某个目录。完整分类是内容归属词典，不是要实例化的目录清单；先读 [writing-policy.md](writing-policy.md) 与 [collections.json](collections.json)。根目录保留人和 AI 的入口，项目说明按需放在 `docs/`。
 
 ## 第一步：合并，不覆盖
-在独立分支或安全副本中解压。对已有 README、AGENTS.md 和 docs 内容逐项比对，保留原有事实与约束；不要直接覆盖。核验根执行入口及权限提案，确认它们符合你的使用方式。
+在独立分支或安全副本中准备参考包，从包所在仓库运行最小部署工具：
+
+```bash
+python3 templates/docs/_tools/init_docs.py --target /目标仓库 --dry-run
+python3 templates/docs/_tools/init_docs.py --target /目标仓库
+```
+
+如果参考包不在默认位置，用 `--source /参考包目录` 指定源目录。默认仅复制根 `AGENTS.md`、根 `README.md`、`docs/AGENTS.md`、`docs/README.md`、`docs/_system/` 的维护规则配置、`docs/_tools/` 和 `docs/_templates/`，不复制业务树、派生索引或参考包交付附件。源中的 `_AGENTS.md` / `_README.md` 由工具在部署时重命名。目标没有业务记录和项目总纲是预期结果，不是缺失待填的空壳。
+
+目标存在任一同名文件时工具拒绝覆盖；先逐项比对合并现有 README、AGENTS.md 和 docs，保留原有事实与约束，再选择无冲突的部署目标。核验根执行入口及权限提案，确认它们符合你的使用方式。
 
 ## 第二步：建立定位能力
 填写 `project-map.json`：仓库入口、前后端、机器契约、数据库 Schema、迁移、测试、环境配置、观测、发布来源和外部设计来源。不适用的位置标记 disabled 并说明原因。可以映射多个仓库，不要求移动代码。
@@ -12,10 +21,14 @@
 填写 `commands.json`：真实可执行程序与参数、工作目录、环境、副作用、验证时间和证据。工具不会执行这些命令；不要从文件名猜测它们的安全性。
 
 ## 第三步：初始化当前事实
-优先填写项目总纲、架构总览、开发启动指南、测试策略、安全基线和权限边界。保留未知项。只有适用范围、依据和批准条件满足后，才将草案改为 active。
+有已确认的项目名称和概况时，可以在部署命令增加 `--overview-title "项目名称" --overview-summary "已确认的项目概况"` 创建最小 draft 总纲；工具不会由此把草稿改为 active。也可以部署后按需创建 `docs/project/overview.md`。
+
+只创建当前任务需要且已有信息的项目总纲、架构总览、启动指南、测试策略、安全基线或权限边界；对应单篇参考在 `docs/_templates/reference/`，不用一次性补齐。保留关键未知；适用范围、依据和批准条件满足后才改为 active，模板安装不代表批准、部署或核验。
 
 ## 第四步：迁移原文档
-依据 `original-document-map.md` 拆分。先解决重复事实与冲突，再统一命名。需求按功能、Backlog/Bug 按任务、发布按版本、成本按月、日志按会话、反馈按条目迁移。旧路径有引用时留下跳转或更新入链。
+依据 `original-document-map.md` 选择逻辑类别。先查已有同主题条目，解决重复事实和冲突，再分配稳定 ID。需求按独立功能、Backlog/Bug 按任务、发布按版本或事件、成本按结算周期、日志按必要工作窗口、反馈按独立可处理观察形成条目，而不是立即各建文件。
+
+各集合的第 1–2 条存于 `<base_path>.md`，第 3 条迁移为 `<base_path>/`，已展开不自动收拢。迁移在同一可审查变更内保留身份、状态、范围和证据，修复旧路径入链、搬迁后的相对出链与锚点；必要时仅保留明确的薄跳转，不留第二份正文。
 
 ## 第五步：形成一个闭环
 选一个已批准的小任务，创建任务条目，关联规范、代码映射和测试；让一个没有历史聊天的新 AI 按入口完成定位与验证。其结果用于修补文档缺口，不靠一次性补齐所有模板。
@@ -25,6 +38,7 @@
 
 ```bash
 python3 docs/_tools/docctl.py check
+python3 docs/_tools/docctl.py find --type feature --query "订阅" --limit 20
 python3 docs/_tools/docctl.py new feature FEAT-001 subscription --title "订阅功能"
 python3 docs/_tools/docctl.py new task TASK-001 implement-subscription --title "实现订阅功能"
 python3 docs/_tools/docctl.py index
@@ -32,7 +46,9 @@ python3 docs/_tools/docctl.py find --type task --state ready --limit 20
 python3 docs/_tools/docctl.py route billing
 ```
 
-`check` 检查模板结构；`check --strict` 额外检查核心文档、必需路径和命令是否达到已声明的就绪条件。未配置的新模板在 strict 模式下应失败，不能把它误报成项目已可自治。
+`find` 用于写入前查找；确认新对象后才使用 `new`，随后按类型最低内容完成草稿并删除不适用空章节。`new` 根据逻辑类别和实际条目数选择布局，必要时执行第三条迁移；工具不批准内容，也不核验业务事实。`index` 仅在需要分页检索时生成派生索引，不是每次创建集合的强制动作。
+
+`check` 检查声明、元数据、引用和按需结构；`check --strict` 额外检查核心文档、必需路径和命令是否达到已声明的就绪条件。未配置的新部署在 strict 模式下应失败，不能把它误报成项目已可自治。
 
 ## 不要做的事情
-不要把所有模板改成 active；不要自动填写核验日期；不要一次性导入全部文档到 Agent 上下文；不要为了适配本套件移动实际代码；不要把未配置的测试写为通过。
+不要把所有模板改成 active；不要自动填写核验日期；不要一次性导入全部文档到 Agent 上下文；不要为了适配本套件移动实际代码；不要把未配置的测试写为通过。不要预建空业务文件、空集合目录或三份同义导航，不按标题数、修改次数或文档长度触发展开。
