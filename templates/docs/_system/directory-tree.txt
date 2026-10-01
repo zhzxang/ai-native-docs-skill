@@ -21,6 +21,7 @@ docs/_system/execution-policy.md
 docs/_system/handover-test.md
 docs/_system/lifecycle.md
 docs/_system/original-document-map.md
+docs/_system/package.json
 docs/_system/project-map.json
 docs/_system/routes.json
 docs/_system/sources.md
@@ -195,4 +196,5 @@ docs/_templates/worklog.md
 docs/_tools/README.md
 docs/_tools/docctl.py
 docs/_tools/init_docs.py
+docs/_tools/test_bootstrap.py
 docs/_tools/test_docctl.py

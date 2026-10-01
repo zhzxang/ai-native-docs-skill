@@ -1,0 +1,889 @@
+{
+  "schema_version": 2,
+  "note": "项目自定义路由，需由入口显式调用。collection 按注册表解析现有紧凑文件或展开目录；不存在时返回知识缺口与计划路径，不预建文件。optional_path 表示该业务文档按需存在，缺失时仍需记录必需知识缺口，不视为事实或执行条件已满足。只读取匹配的有效条目；写入先读取 writing-policy 并查重。",
+  "routes": [
+    {
+      "id": "orientation",
+      "title": "理解项目",
+      "keywords": [
+        "概述",
+        "上手",
+        "项目",
+        "orientation"
+      ],
+      "must_read": [
+        {
+          "optional_path": "docs/project/overview.md"
+        },
+        {
+          "optional_path": "docs/engineering/development/quickstart.md"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "需要了解系统边界",
+          "paths": [
+            {
+              "optional_path": "docs/engineering/architecture/overview.md"
+            }
+          ]
+        }
+      ],
+      "write_back": []
+    },
+    {
+      "id": "feature",
+      "title": "实现或修改功能",
+      "keywords": [
+        "功能",
+        "feature",
+        "需求"
+      ],
+      "must_read": [
+        {
+          "collection": "feature"
+        },
+        {
+          "optional_path": "docs/tests/strategy.md"
+        },
+        {
+          "collection": "task"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "跨模块边界",
+          "paths": [
+            {
+              "optional_path": "docs/engineering/architecture/overview.md"
+            }
+          ]
+        },
+        {
+          "condition": "涉及用户界面",
+          "paths": [
+            {
+              "collection": "token"
+            },
+            {
+              "collection": "component"
+            },
+            {
+              "collection": "design-asset"
+            },
+            {
+              "collection": "page"
+            }
+          ]
+        },
+        {
+          "condition": "涉及接口、数据或权限",
+          "paths": [
+            {
+              "collection": "api"
+            },
+            {
+              "collection": "event"
+            },
+            {
+              "collection": "error"
+            },
+            {
+              "collection": "entity"
+            },
+            {
+              "collection": "migration"
+            },
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "optional_path": "docs/security/access-control.md"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "feature"
+        },
+        {
+          "collection": "test-case"
+        },
+        {
+          "collection": "task"
+        }
+      ]
+    },
+    {
+      "id": "bug",
+      "title": "复现与修复 Bug",
+      "keywords": [
+        "bug",
+        "缺陷",
+        "修复"
+      ],
+      "must_read": [
+        {
+          "collection": "task"
+        },
+        {
+          "collection": "feature"
+        },
+        {
+          "optional_path": "docs/tests/strategy.md"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "线上问题",
+          "paths": [
+            {
+              "collection": "runbook"
+            },
+            {
+              "collection": "incident"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "test-case"
+        },
+        {
+          "collection": "test-report"
+        },
+        {
+          "collection": "task"
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "title": "页面、流程与组件",
+      "keywords": [
+        "UI",
+        "页面",
+        "设计",
+        "交互"
+      ],
+      "must_read": [
+        {
+          "optional_path": "docs/design/principles.md"
+        },
+        {
+          "collection": "page"
+        },
+        {
+          "collection": "component"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "跨功能路径",
+          "paths": [
+            {
+              "collection": "journey"
+            }
+          ]
+        },
+        {
+          "condition": "外部设计核验",
+          "paths": [
+            {
+              "collection": "design-asset"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "page"
+        },
+        {
+          "collection": "component"
+        },
+        {
+          "collection": "test-case"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "title": "API 或事件变更",
+      "keywords": [
+        "api",
+        "接口",
+        "事件",
+        "webhook"
+      ],
+      "must_read": [
+        {
+          "collection": "api"
+        },
+        {
+          "collection": "event"
+        },
+        {
+          "collection": "error"
+        },
+        {
+          "optional_path": "docs/security/access-control.md"
+        },
+        {
+          "optional_path": "docs/tests/strategy.md"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "影响数据库或第三方",
+          "paths": [
+            {
+              "collection": "entity"
+            },
+            {
+              "collection": "migration"
+            },
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "collection": "service"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "api"
+        },
+        {
+          "collection": "event"
+        },
+        {
+          "collection": "test-case"
+        }
+      ]
+    },
+    {
+      "id": "database",
+      "title": "数据库与数据迁移",
+      "keywords": [
+        "数据库",
+        "迁移",
+        "schema",
+        "database"
+      ],
+      "must_read": [
+        {
+          "optional_path": "docs/db/overview.md"
+        },
+        {
+          "collection": "migration"
+        },
+        {
+          "collection": "data-lifecycle"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "涉及生产或恢复",
+          "paths": [
+            "docs/_system/execution-policy.md",
+            {
+              "collection": "backup-plan"
+            }
+          ]
+        },
+        {
+          "condition": "改变收集、保留或删除",
+          "paths": [
+            {
+              "collection": "privacy"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "entity"
+        },
+        {
+          "collection": "migration"
+        },
+        {
+          "collection": "test-report"
+        }
+      ]
+    },
+    {
+      "id": "billing",
+      "title": "订阅、价格、支付与权益",
+      "keywords": [
+        "billing",
+        "支付",
+        "订阅",
+        "定价",
+        "退款"
+      ],
+      "must_read": [
+        {
+          "collection": "feature"
+        },
+        {
+          "collection": "pricing"
+        },
+        {
+          "collection": "refund-policy"
+        },
+        {
+          "optional_path": "docs/security/access-control.md"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "涉及回调或第三方状态",
+          "paths": [
+            {
+              "collection": "event"
+            },
+            {
+              "collection": "service"
+            }
+          ]
+        },
+        {
+          "condition": "涉及展示与通知",
+          "paths": [
+            {
+              "collection": "faq"
+            },
+            {
+              "collection": "copy"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "feature"
+        },
+        {
+          "collection": "test-case"
+        },
+        {
+          "collection": "pricing"
+        },
+        {
+          "collection": "faq"
+        }
+      ]
+    },
+    {
+      "id": "environment",
+      "title": "环境、配置与依赖",
+      "keywords": [
+        "环境",
+        "配置",
+        "密钥",
+        "environment"
+      ],
+      "must_read": [
+        {
+          "collection": "environment"
+        },
+        {
+          "collection": "config"
+        },
+        {
+          "optional_path": "docs/security/secrets.md"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "涉及外部服务或费用",
+          "paths": [
+            {
+              "collection": "service"
+            },
+            {
+              "collection": "cost-period"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        "docs/_system/project-map.json",
+        "docs/_system/commands.json",
+        {
+          "collection": "config"
+        }
+      ]
+    },
+    {
+      "id": "release",
+      "title": "发布与恢复",
+      "keywords": [
+        "发布",
+        "部署",
+        "回滚",
+        "release"
+      ],
+      "must_read": [
+        "docs/_system/execution-policy.md",
+        {
+          "collection": "release-checklist"
+        },
+        {
+          "collection": "deployment"
+        },
+        {
+          "collection": "release"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "包含数据库变化",
+          "paths": [
+            {
+              "collection": "migration"
+            }
+          ]
+        },
+        {
+          "condition": "包含用户承诺变化",
+          "paths": [
+            {
+              "collection": "privacy"
+            },
+            {
+              "collection": "terms"
+            },
+            {
+              "collection": "refund-policy"
+            },
+            {
+              "collection": "pricing"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "release"
+        },
+        {
+          "collection": "test-report"
+        }
+      ]
+    },
+    {
+      "id": "incident",
+      "title": "线上事故",
+      "keywords": [
+        "故障",
+        "事故",
+        "线上",
+        "incident"
+      ],
+      "must_read": [
+        "docs/_system/execution-policy.md",
+        {
+          "collection": "runbook"
+        },
+        {
+          "collection": "incident"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "外部服务故障",
+          "paths": [
+            {
+              "collection": "service"
+            }
+          ]
+        },
+        {
+          "condition": "安全事故",
+          "paths": [
+            {
+              "collection": "threat-model"
+            },
+            {
+              "collection": "security-control"
+            },
+            {
+              "collection": "security-finding"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "incident"
+        },
+        {
+          "collection": "review"
+        },
+        {
+          "collection": "task"
+        }
+      ]
+    },
+    {
+      "id": "metrics",
+      "title": "埋点、指标与实验",
+      "keywords": [
+        "指标",
+        "埋点",
+        "实验",
+        "metrics"
+      ],
+      "must_read": [
+        {
+          "collection": "metric"
+        },
+        {
+          "collection": "event"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "收集或处理个人数据",
+          "paths": [
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "collection": "privacy"
+            }
+          ]
+        },
+        {
+          "condition": "开展实验",
+          "paths": [
+            {
+              "collection": "experiment"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "metric"
+        },
+        {
+          "collection": "event"
+        },
+        {
+          "collection": "experiment"
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "title": "商业、路线图与研究",
+      "keywords": [
+        "商业",
+        "路线图",
+        "市场",
+        "竞品",
+        "business"
+      ],
+      "must_read": [
+        {
+          "optional_path": "docs/project/overview.md"
+        },
+        {
+          "optional_path": "docs/business/model.md"
+        },
+        {
+          "collection": "feedback"
+        },
+        {
+          "collection": "interview"
+        },
+        {
+          "collection": "competitor"
+        },
+        {
+          "collection": "study"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "阶段取舍",
+          "paths": [
+            {
+              "collection": "roadmap"
+            }
+          ]
+        },
+        {
+          "condition": "定价决策",
+          "paths": [
+            {
+              "collection": "pricing"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "assumption"
+        },
+        {
+          "collection": "roadmap"
+        },
+        {
+          "collection": "study"
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "title": "营销和内容发布",
+      "keywords": [
+        "营销",
+        "内容",
+        "SEO",
+        "marketing"
+      ],
+      "must_read": [
+        {
+          "optional_path": "docs/marketing/positioning.md"
+        },
+        {
+          "collection": "copy"
+        },
+        {
+          "collection": "content"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "包含功能、价格或政策承诺",
+          "paths": [
+            {
+              "collection": "feature"
+            },
+            {
+              "collection": "pricing"
+            },
+            {
+              "collection": "privacy"
+            },
+            {
+              "collection": "terms"
+            },
+            {
+              "collection": "refund-policy"
+            }
+          ]
+        },
+        {
+          "condition": "需要对外发布或费用",
+          "paths": [
+            "docs/_system/execution-policy.md"
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "content"
+        },
+        {
+          "collection": "campaign"
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "title": "客服与反馈",
+      "keywords": [
+        "客服",
+        "反馈",
+        "support"
+      ],
+      "must_read": [
+        {
+          "collection": "faq"
+        },
+        {
+          "collection": "support-case"
+        },
+        {
+          "collection": "feedback"
+        }
+      ],
+      "read_when": [
+        {
+          "condition": "订阅、退款或账户操作",
+          "paths": [
+            {
+              "collection": "refund-policy"
+            },
+            "docs/_system/execution-policy.md"
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "support-case"
+        },
+        {
+          "collection": "feedback"
+        },
+        {
+          "collection": "task"
+        }
+      ]
+    },
+    {
+      "id": "legal",
+      "title": "政策与条款",
+      "keywords": [
+        "隐私",
+        "条款",
+        "政策",
+        "legal"
+      ],
+      "must_read": [
+        {
+          "collection": "privacy"
+        },
+        {
+          "collection": "terms"
+        },
+        {
+          "collection": "refund-policy"
+        },
+        "docs/_system/authority.md",
+        "docs/_system/execution-policy.md"
+      ],
+      "read_when": [
+        {
+          "condition": "隐私与数据",
+          "paths": [
+            {
+              "collection": "data-lifecycle"
+            },
+            {
+              "collection": "service"
+            }
+          ]
+        },
+        {
+          "condition": "收费与退款",
+          "paths": [
+            {
+              "collection": "pricing"
+            },
+            {
+              "collection": "refund-policy"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "privacy"
+        },
+        {
+          "collection": "terms"
+        },
+        {
+          "collection": "refund-policy"
+        },
+        {
+          "collection": "release"
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "title": "安全与权限",
+      "keywords": [
+        "安全",
+        "权限",
+        "security"
+      ],
+      "must_read": [
+        {
+          "optional_path": "docs/security/baseline.md"
+        },
+        {
+          "optional_path": "docs/security/access-control.md"
+        },
+        "docs/_system/execution-policy.md"
+      ],
+      "read_when": [
+        {
+          "condition": "密钥相关",
+          "paths": [
+            {
+              "optional_path": "docs/security/secrets.md"
+            }
+          ]
+        },
+        {
+          "condition": "发现风险",
+          "paths": [
+            {
+              "collection": "security-finding"
+            },
+            {
+              "collection": "threat-model"
+            }
+          ]
+        }
+      ],
+      "write_back": [
+        {
+          "collection": "security-control"
+        },
+        {
+          "collection": "security-finding"
+        },
+        {
+          "collection": "task"
+        }
+      ]
+    },
+    {
+      "id": "docs",
+      "title": "文档维护",
+      "keywords": [
+        "文档",
+        "docs"
+      ],
+      "must_read": [
+        "docs/AGENTS.md",
+        "docs/_system/writing-policy.md",
+        "docs/_system/conventions.md",
+        "docs/_system/authority.md",
+        "docs/_system/collections.json"
+      ],
+      "read_when": [
+        {
+          "condition": "新增类型或大规模迁移",
+          "paths": [
+            "docs/_system/lifecycle.md",
+            "docs/_system/collections.json"
+          ]
+        },
+        {
+          "condition": "修改工具适配",
+          "paths": [
+            "docs/_system/tool-adapters.md"
+          ]
+        }
+      ],
+      "write_back": [
+        "docs/_system/routes.json"
+      ]
+    }
+  ]
+}
