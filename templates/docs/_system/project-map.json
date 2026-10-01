@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": null,
+    "owner": null,
+    "operating_mode": "bootstrap"
+  },
+  "work_tracking": {
+    "mode": "repository",
+    "source": "docs/work/items",
+    "external_ref": null
+  },
+  "locations": [
+    {
+      "id": "application",
+      "kind": "code",
+      "description": "应用代码与入口",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "frontend",
+      "kind": "code",
+      "description": "前端实现；不适用时明确禁用",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "backend",
+      "kind": "code",
+      "description": "后端实现；不适用时明确禁用",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "api-contract",
+      "kind": "contract",
+      "description": "机器 API 契约或选定生成源",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "event-contract",
+      "kind": "contract",
+      "description": "事件或埋点契约源",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "database-schema",
+      "kind": "data",
+      "description": "Schema 或实际结构定义",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "database-migrations",
+      "kind": "data",
+      "description": "实际迁移资产",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "tests.unit",
+      "kind": "test",
+      "description": "单元测试实现",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "tests.integration",
+      "kind": "test",
+      "description": "集成测试实现",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "tests.e2e",
+      "kind": "test",
+      "description": "端到端测试实现",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "test-fixtures",
+      "kind": "test",
+      "description": "安全测试夹具或生成器",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "configuration",
+      "kind": "configuration",
+      "description": "配置校验与安全示例",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "design-source",
+      "kind": "external",
+      "description": "外部设计资产及批准版本",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "design-tokens",
+      "kind": "design",
+      "description": "Tokens 选定源",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "ui-components",
+      "kind": "design",
+      "description": "组件实现或组件展示环境",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "observability",
+      "kind": "operations",
+      "description": "监测配置与受控仪表盘",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "deployment",
+      "kind": "operations",
+      "description": "实际构建/部署配置和工件来源",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    },
+    {
+      "id": "published-content",
+      "kind": "external",
+      "description": "已发布政策、FAQ、定价与文案位置",
+      "enabled": null,
+      "repository": ".",
+      "paths": [],
+      "external_ref": null,
+      "verified_at": null,
+      "verification_ref": null,
+      "not_applicable_reason": null
+    }
+  ],
+  "readiness": {
+    "required_documents": [
+      "README.md",
+      "docs/project/overview.md",
+      "docs/engineering/architecture/overview.md",
+      "docs/engineering/development/quickstart.md",
+      "docs/tests/strategy.md",
+      "docs/security/baseline.md"
+    ],
+    "required_locations": [
+      "application"
+    ],
+    "required_commands": [
+      "verify"
+    ],
+    "note": "按项目实际情况经确认调整门禁；不允许执行者为绕过失败擅自降低要求。通过只是文档配置就绪，不证明产品正确或生产权限可用。"
+  }
+}

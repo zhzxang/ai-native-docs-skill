@@ -1,0 +1,24 @@
+{
+  "type": "access-policy",
+  "page": 1,
+  "pages": 1,
+  "page_size": 40,
+  "records": [
+    {
+      "id": "SEC-ACCESS",
+      "type": "access-policy",
+      "status": "draft",
+      "summary": "角色、资源、动作、租户隔离和敏感操作边界。",
+      "owner": null,
+      "applies_to": "{{VERSION_OR_SCOPE}}",
+      "verified_at": null,
+      "verification_ref": null,
+      "authority": "normative",
+      "approved_by": null,
+      "approval_ref": null,
+      "path": "docs/security/access-control.md",
+      "title": "鉴权与权限模型",
+      "source_sha256": "7f12b489e1b9e41f2932d2d0ccf38087262d4a46a929a4ffef076a191545866a"
+    }
+  ]
+}

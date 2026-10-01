@@ -1,0 +1,336 @@
+ai-project-docs-kit/
+├── docs/
+│   ├── _generated/
+│   │   ├── catalog/
+│   │   │   ├── access-policy/
+│   │   │   │   └── page-001.json
+│   │   │   ├── architecture-overview/
+│   │   │   │   └── page-001.json
+│   │   │   ├── business-model/
+│   │   │   │   └── page-001.json
+│   │   │   ├── database-overview/
+│   │   │   │   └── page-001.json
+│   │   │   ├── design-principles/
+│   │   │   │   └── page-001.json
+│   │   │   ├── development-conventions/
+│   │   │   │   └── page-001.json
+│   │   │   ├── development-guide/
+│   │   │   │   └── page-001.json
+│   │   │   ├── positioning/
+│   │   │   │   └── page-001.json
+│   │   │   ├── project-overview/
+│   │   │   │   └── page-001.json
+│   │   │   ├── secret-policy/
+│   │   │   │   └── page-001.json
+│   │   │   ├── security-baseline/
+│   │   │   │   └── page-001.json
+│   │   │   ├── test-strategy/
+│   │   │   │   └── page-001.json
+│   │   │   ├── workflow/
+│   │   │   │   └── page-001.json
+│   │   │   └── README.md
+│   │   ├── indexes/
+│   │   │   ├── access-policy/
+│   │   │   │   └── page-001.md
+│   │   │   ├── architecture-overview/
+│   │   │   │   └── page-001.md
+│   │   │   ├── business-model/
+│   │   │   │   └── page-001.md
+│   │   │   ├── database-overview/
+│   │   │   │   └── page-001.md
+│   │   │   ├── design-principles/
+│   │   │   │   └── page-001.md
+│   │   │   ├── development-conventions/
+│   │   │   │   └── page-001.md
+│   │   │   ├── development-guide/
+│   │   │   │   └── page-001.md
+│   │   │   ├── positioning/
+│   │   │   │   └── page-001.md
+│   │   │   ├── project-overview/
+│   │   │   │   └── page-001.md
+│   │   │   ├── secret-policy/
+│   │   │   │   └── page-001.md
+│   │   │   ├── security-baseline/
+│   │   │   │   └── page-001.md
+│   │   │   ├── test-strategy/
+│   │   │   │   └── page-001.md
+│   │   │   ├── workflow/
+│   │   │   │   └── page-001.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── _system/
+│   │   ├── authority.md
+│   │   ├── bootstrap.md
+│   │   ├── change-impact.md
+│   │   ├── checksums.sha256
+│   │   ├── collections.json
+│   │   ├── commands.json
+│   │   ├── configuration-guide.md
+│   │   ├── conventions.md
+│   │   ├── definition-of-done.md
+│   │   ├── directory-tree.txt
+│   │   ├── execution-policy.md
+│   │   ├── handover-test.md
+│   │   ├── lifecycle.md
+│   │   ├── original-document-map.md
+│   │   ├── project-map.json
+│   │   ├── README.md
+│   │   ├── routes.json
+│   │   ├── sources.md
+│   │   ├── template-catalog.md
+│   │   ├── tool-adapters.md
+│   │   └── validation-report.md
+│   ├── _tools/
+│   │   ├── docctl.py
+│   │   ├── README.md
+│   │   └── test_docctl.py
+│   ├── archive/
+│   │   ├── records/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── automation/
+│   │   ├── adapters/
+│   │   │   ├── _claude.template.md
+│   │   │   ├── _copilot.template.md
+│   │   │   ├── _local-agents.template.md
+│   │   │   └── README.md
+│   │   ├── skills/
+│   │   │   ├── _template/
+│   │   │   │   └── SKILL.md
+│   │   │   └── README.md
+│   │   ├── workflows/
+│   │   │   ├── _template.md
+│   │   │   ├── docs-audit.md
+│   │   │   ├── fix-bug.md
+│   │   │   ├── implement-feature.md
+│   │   │   ├── incident.md
+│   │   │   ├── README.md
+│   │   │   └── release.md
+│   │   └── README.md
+│   ├── business/
+│   │   ├── assumptions/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── pricing/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── model.md
+│   │   └── README.md
+│   ├── contracts/
+│   │   ├── api/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── errors/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── events/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── db/
+│   │   ├── entities/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── lifecycle/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── migrations/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── overview.md
+│   │   └── README.md
+│   ├── design/
+│   │   ├── assets/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── components/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── tokens/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── principles.md
+│   │   └── README.md
+│   ├── engineering/
+│   │   ├── adrs/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── architecture/
+│   │   │   ├── modules/
+│   │   │   │   ├── _template.md
+│   │   │   │   └── README.md
+│   │   │   ├── overview.md
+│   │   │   └── README.md
+│   │   ├── dependencies/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── development/
+│   │   │   ├── guides/
+│   │   │   │   ├── _template.md
+│   │   │   │   └── README.md
+│   │   │   ├── conventions.md
+│   │   │   ├── quickstart.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── legal/
+│   │   ├── privacy/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── refunds/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── terms/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── marketing/
+│   │   ├── campaigns/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── content/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── copy/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── seo/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── positioning.md
+│   │   └── README.md
+│   ├── operations/
+│   │   ├── backup/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── configuration/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── costs/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── deployment/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── environments/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── incidents/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── observability/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── runbooks/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── services/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── product/
+│   │   ├── experiments/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── features/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── journeys/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── metrics/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── pages/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── roadmap/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── project/
+│   │   ├── glossary/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── overview.md
+│   │   └── README.md
+│   ├── releases/
+│   │   ├── checklists/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── entries/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── research/
+│   │   ├── competitors/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── feedback/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── interviews/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── studies/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── security/
+│   │   ├── controls/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── findings/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── threat-models/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── access-control.md
+│   │   ├── baseline.md
+│   │   ├── README.md
+│   │   └── secrets.md
+│   ├── support/
+│   │   ├── cases/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── faq/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── tests/
+│   │   ├── cases/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── fixtures/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── reports/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── suites/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── README.md
+│   │   └── strategy.md
+│   ├── work/
+│   │   ├── approvals/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── items/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── logs/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── plans/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   ├── reviews/
+│   │   │   ├── _template.md
+│   │   │   └── README.md
+│   │   └── README.md
+│   ├── AGENTS.md
+│   └── README.md
+├── AGENTS.md
+└── README.md

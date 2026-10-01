@@ -1,0 +1,24 @@
+{
+  "type": "positioning",
+  "page": 1,
+  "pages": 1,
+  "page_size": 40,
+  "records": [
+    {
+      "id": "MARKETING-POSITIONING",
+      "type": "positioning",
+      "status": "draft",
+      "summary": "受众、价值主张、差异化和对外承诺边界。",
+      "owner": null,
+      "applies_to": "{{VERSION_OR_SCOPE}}",
+      "verified_at": null,
+      "verification_ref": null,
+      "authority": "normative",
+      "approved_by": null,
+      "approval_ref": null,
+      "path": "docs/marketing/positioning.md",
+      "title": "产品定位与信息表达",
+      "source_sha256": "3d7649d5266aa9dbea8de0a1896d7158515c4e46209db166e05249fbff121302"
+    }
+  ]
+}

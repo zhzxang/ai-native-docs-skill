@@ -1,0 +1,24 @@
+{
+  "type": "design-principles",
+  "page": 1,
+  "pages": 1,
+  "page_size": 40,
+  "records": [
+    {
+      "id": "DESIGN-PRINCIPLES",
+      "type": "design-principles",
+      "status": "draft",
+      "summary": "设计意图、设计资产、Tokens 和实际组件之间的边界。",
+      "owner": null,
+      "applies_to": "{{VERSION_OR_SCOPE}}",
+      "verified_at": null,
+      "verification_ref": null,
+      "authority": "normative",
+      "approved_by": null,
+      "approval_ref": null,
+      "path": "docs/design/principles.md",
+      "title": "设计原则与来源",
+      "source_sha256": "08bbbfecc7986f33cd8b80c6c0a8ca15122ac80914d51a13d42c241a51d14e83"
+    }
+  ]
+}

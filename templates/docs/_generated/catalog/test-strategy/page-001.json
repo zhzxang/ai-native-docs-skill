@@ -1,0 +1,24 @@
+{
+  "type": "test-strategy",
+  "page": 1,
+  "pages": 1,
+  "page_size": 40,
+  "records": [
+    {
+      "id": "TEST-STRATEGY",
+      "type": "test-strategy",
+      "status": "draft",
+      "summary": "按风险分层的测试范围、环境、数据和验收证据。",
+      "owner": null,
+      "applies_to": "{{VERSION_OR_SCOPE}}",
+      "verified_at": null,
+      "verification_ref": null,
+      "authority": "normative",
+      "approved_by": null,
+      "approval_ref": null,
+      "path": "docs/tests/strategy.md",
+      "title": "测试策略",
+      "source_sha256": "9ad46e6db884e5dcff385df5725ea2dfcffdd9b4a144a9e008c57b09fd0f5c58"
+    }
+  ]
+}
