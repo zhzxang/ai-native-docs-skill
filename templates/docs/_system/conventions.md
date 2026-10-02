@@ -5,7 +5,7 @@
 
 持续增长的内容按 [collections.json](collections.json) 的逻辑集合归属：无内容不创建业务壳，1–2 个独立条目存于 `<base_path>.md`，第 3 个条目展开为 `<base_path>/<ID>-<slug>.md`。已展开不自动收拢；标题、段落、字段、验收条件和修改次数不计数。业务父目录按需创建，不受集合阈值限制。详细规则见 [writing-policy.md](writing-policy.md)。
 
-集合 README 非默认必建；确有导航需要时只保留职责、查找方式和稳定入口，不增加第二份正文。集中模板 `docs/_templates/<key>.md` 不可当实例，未使用模板保留在参考源，不为分类齐全而制造空业务目录。
+集合 README 非默认必建；确有导航需要时只保留职责、查找方式和稳定入口，不增加第二份正文。Skill 资源根中的集中模板 `docs/_templates/<key>.md` 不可当实例，不复制到项目；未使用模板保留在参考源，不为分类齐全而制造空业务目录。
 
 ## 元数据
 独立条目文件使用 YAML front matter；紧凑文件内每个条目使用 `yaml doc-meta` 代码块。两种形式字段相同，均为受限子集：顶层 `key: JSON标量`，字符串双引号，未知值为 `null`。不使用嵌套、折叠文本、多行值、数组或 YAML 标签。这样内置工具可以只依赖 Python 标准库；这属于本项目约定，不是 AGENTS.md 或 Agent Skills 的统一要求。

@@ -121,13 +121,13 @@ approval_ref: null
 
 ## 7. 模板、初始化与定位
 
-集合模板集中在 `docs/_templates/<key>.md`；单篇文档、导航、流程和适配器参考集中在 `docs/_templates/reference/`，未使用模板不实例化为业务目录。最小部署只安装根入口、docs 入口、规则配置、工具和集中模板源；项目总纲与其他业务文档有确认内容后才建立。
+集合模板集中在 Skill 资源根的 `docs/_templates/<key>.md`；单篇文档、导航、流程和适配器参考集中在该资源根的 `docs/_templates/reference/`。未使用模板不实例化为业务目录。初始化只合并四个 README/AGENTS 入口并保存目标的 `docs/.ai-docs.json`，工具、规则和模板不复制到目标项目，没有完整安装选项；项目总纲与其他业务文档有确认内容后才建立。
 
 定位优先使用 `docctl.py find` 的类型、ID、关键词和状态过滤；`index` 同时覆盖聚合文件中的各独立条目和已展开文件，每条记录定位到对应锚点。路由用 `{"collection":"feature"}` 解析当前实际位置，尚无内容的类别只报告按需位置；不存在的按需单篇资料使用 `optional_path`，不为满足路由提前制造文件。
 
 ## 8. 检查与交付
 
-执行 `python3 docs/_tools/docctl.py check`，并针对本次写入逐项确认：
+从 Skill 执行 `python3 /Skill目录/assets/templates/docs/_tools/docctl.py --root /目标项目 check`，并针对本次写入逐项确认：
 
 - 分类与信息角色正确，已有同主题对象优先更新，ID 与实际条目边界一致。
 - 没有无内容业务壳；未展开集合最多两个独立条目；第三条完成迁移；已展开未隐式收拢。

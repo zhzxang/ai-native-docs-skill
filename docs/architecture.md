@@ -13,25 +13,42 @@ templates/
 └── docs/
     ├── _AGENTS.md                # 安装后为 docs/AGENTS.md
     ├── _README.md                # 安装后为 docs/README.md
-    ├── _system/                  # 协议、逻辑分类、路由与真实位置配置
+    ├── _system/                  # Skill 协议、默认分类与配置字段参考
     │   ├── writing-policy.md
     │   ├── collections.json      # schema_version 2
     │   └── routes.json           # 通过 collection key 解析当前布局
-    ├── _tools/                   # init_docs.py、docctl.py 与工具测试
+    ├── _tools/                   # Skill 工具与测试，不复制到目标
     └── _templates/               # 参考源，默认不作为项目事实或索引条目
         ├── <key>.md              # 60 类条目的最小充分结构
         └── reference/            # 按需参考的领域说明、单例和工作流
 ```
 
-`init_docs.py` 默认只部署入口、协议、工具和集中参考源，不实例化业务目录或索引。明确提供项目标题与摘要时才创建总纲草案。具体项目内容确认后，按协议创建所需单例和集合；集中参考源不能被解释为已生效的项目规范。
+上述结构是本仓库的唯一资源源码，打包到 Skill 后仍保存在资源根，不复制到目标项目。目标初始化统一采用轻量布局，不提供完整安装选项：
+
+```text
+目标项目/
+├── AGENTS.md
+├── README.md
+└── docs/
+    ├── AGENTS.md
+    ├── README.md
+    ├── .ai-docs.json             # 唯一项目配置，含版本及安装状态
+    └── project/overview.md       # 明确确认概况时才创建
+```
+
+不实例化业务分类树、空登记项或派生索引。项目内容确认后按协议创建所需单例和集合；集中参考源不能被解释为已生效的项目规范。
 
 ## 项目内 Skill
 
-[ai-docs-init](../skills/ai-docs-init/SKILL.md) 支持新项目初始化、已有项目增量接入与系统升级。安装合并四个 README/AGENTS 入口中的托管区块，保留原文和项目配置；版本清单记录托管资产的基线，升级只自动更新未修改的部分，本地定制和同名非托管文件列为保留或冲突。
+[ai-docs-init](../skills/ai-docs-init/SKILL.md) 支持轻量初始化、已有项目增量接入与系统升级。安装合并四个 README/AGENTS 入口中的托管区块；项目配置保存在 `docs/.ai-docs.json`，按字段区分身份、位置、命令、就绪、覆盖和安装基线，当前不拆分。升级保留项目字段与未知扩展字段，入口本地修改保留并报告。
 
 `skills/ai-docs-init/assets/templates/` 由本仓库唯一模板源码 `templates/` 生成，不手工维护。修改模板后从仓库根运行 `python3 skills/ai-docs-init/scripts/build_assets.py`，再用 `--check` 检查源码与打包资产一致。整个 Skill 可单独复制使用，安装器不依赖来源仓库路径，也不需要第三方 Python 库。保存到本项目的 `skills/` 不代表已在客户端全局安装。
 
 安装、真实项目配置与严格就绪分别核验。`adopt` 接入后续写入协议，历史正文根据用户明确范围迁移；安装本身不改写旧事实或批量建立业务文档。
+
+工具从 Skill 运行，通过 `--root` 指定目标，以目标配置与匹配版本 Skill 的默认分类、规则和模板组合解析。项目不保存开发者机器的绝对 Skill 路径，资源缺失或版本不匹配时报告缺口；其他机器与 CI 使用同一版本资源，没有自动复制回退。
+
+旧完整安装转换先迁入项目配置，保留兼容定制和未知信息。旧通用资产仅按真实所有权基线及引用影响安全清理，本地修改或归属不明的材料保留并报告；不批量删除目录。
 
 ## 集合状态
 

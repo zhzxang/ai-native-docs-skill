@@ -1,4 +1,4 @@
-# 本参考包的实际文件快照；业务分类词典见 collections.json，目标项目按需实例化。
+# 本参考包的资源源码快照；目标项目只保存轻量入口、单一配置与按需业务内容。
 _AGENTS.md
 _README.md
 docs/_AGENTS.md
@@ -194,6 +194,7 @@ docs/_templates/token.md
 docs/_templates/workflow.md
 docs/_templates/worklog.md
 docs/_tools/README.md
+docs/_tools/ai_docs_runtime.py
 docs/_tools/docctl.py
 docs/_tools/init_docs.py
 docs/_tools/test_bootstrap.py

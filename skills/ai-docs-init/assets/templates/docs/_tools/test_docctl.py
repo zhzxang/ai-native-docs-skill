@@ -86,6 +86,51 @@ class RepositoryTests(unittest.TestCase):
         self.assertFalse((self.root / "docs/product").exists())
         self.assertFalse((self.root / "docs/research").exists())
         self.assertFalse((self.root / "docs/_generated").exists())
+        for folder in ("_system", "_tools", "_templates"):
+            self.assertFalse((self.root / "docs" / folder).exists())
+
+    def test_fixed_resource_version_mismatch_blocks_writes(self):
+        path = self.root / "docs/.ai-docs.json"
+        data = json.loads(path.read_text())
+        data["system"]["version"] = "99.0.0"
+        data["installation"]["system_version"] = "99.0.0"
+        path.write_text(json.dumps(data))
+        before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        with self.assertRaises(docctl.DocError):
+            self.new()
+        self.assertFalse(docctl.validate(self.root)["ok"])
+        self.assertEqual(before, {p.relative_to(self.root): p.read_bytes()
+                                  for p in self.root.rglob("*") if p.is_file()})
+
+    def test_invalid_override_cannot_expand_the_threshold_or_create_business_files(self):
+        path = self.root / "docs/.ai-docs.json"
+        data = json.loads(path.read_text())
+        registry = json.loads((KIT_ROOT / "docs/_system/collections.json").read_text())
+        registry["defaults"]["compact_max_items"] = 3
+        data["overrides"] = {"collections": registry}
+        path.write_text(json.dumps(data))
+        with self.assertRaises(docctl.DocError):
+            self.new()
+        self.assertFalse(docctl.validate(self.root)["ok"])
+        self.assertFalse((self.root / "docs/product").exists())
+
+    def test_source_template_check_retains_legacy_read_compatibility(self):
+        result = docctl.validate(KIT_ROOT)
+        self.assertTrue(result["ok"], result["errors"])
+
+    def test_external_resource_path_controls_protocol_and_templates_without_copying_them(self):
+        resources = Path(self.tmp.name).resolve() / "external-resources"
+        shutil.copytree(KIT_ROOT, resources, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        path = resources / "docs/_templates/feedback.md"
+        path.write_text(path.read_text().replace("## 来源与时间", "## 外部模板特有字段"))
+        before = {p.relative_to(resources): (p.read_bytes(), p.stat().st_mtime_ns)
+                  for p in resources.rglob("*") if p.is_file()}
+        record = docctl.make_new(self.root, "feedback", "FB-1", "first", "First feedback", resources=resources)
+        self.assertIn("### 外部模板特有字段", record.read_text())
+        self.assertTrue(docctl.validate(self.root, resources=resources)["ok"])
+        self.assertEqual(before, {p.relative_to(resources): (p.read_bytes(), p.stat().st_mtime_ns)
+                                  for p in resources.rglob("*") if p.is_file()})
+        self.assertFalse((self.root / "docs/_templates").exists())
 
     def test_first_feedback_creates_only_compact_file(self):
         p = self.new(key="feedback")
@@ -152,7 +197,7 @@ class RepositoryTests(unittest.TestCase):
     def test_concurrent_write_is_refused_without_overwriting(self):
         p = self.new()
         before = p.read_bytes()
-        lock = self.root / "docs/_system/.docctl-new.lock"
+        lock = self.root / "docs/.docctl.lock"
         lock.write_text("active writer")
         with self.assertRaises(docctl.DocError):
             self.new(901)
@@ -192,7 +237,7 @@ class RepositoryTests(unittest.TestCase):
         self.assertEqual(result["records"][0]["id"], "TASK-901")
 
     def test_external_tracker_rejects_duplicate_local_source(self):
-        p = self.root / "docs/_system/project-map.json"
+        p = self.root / "docs/.ai-docs.json"
         data = json.loads(p.read_text())
         data["work_tracking"]["mode"] = "external"
         p.write_text(json.dumps(data))
@@ -312,7 +357,7 @@ class RepositoryTests(unittest.TestCase):
         self.assertFalse(docctl.validate(self.root)["ok"])
 
     def test_protocol_fenced_examples_are_not_records(self):
-        policy = self.root / "docs/_system/writing-policy.md"
+        policy = KIT_ROOT / "docs/_system/writing-policy.md"
         self.assertIn("```yaml doc-meta", policy.read_text())
         self.assertEqual(docctl.collect_records(self.root), [])
 
@@ -410,7 +455,7 @@ class RepositoryTests(unittest.TestCase):
         self.assertTrue(docctl.validate(self.root)["ok"])
 
     def test_pagination_and_determinism(self):
-        template = (self.root / "docs/_templates/feature.md").read_text()
+        template = (KIT_ROOT / "docs/_templates/feature.md").read_text()
         directory = self.root / "docs/product/features"
         directory.mkdir(parents=True)
         for n in range(1, 44):
@@ -428,11 +473,12 @@ class RepositoryTests(unittest.TestCase):
         self.assertTrue(docctl.validate(self.root)["ok"])
 
     def test_check_never_executes_registered_commands(self):
-        p = self.root / "docs/_system/commands.json"
+        p = self.root / "docs/.ai-docs.json"
         data = json.loads(p.read_text())
         marker = self.root / "MUST_NOT_EXIST"
-        data["commands"][0]["argv"] = [sys.executable, "-c", f"open({str(marker)!r},'w').write('bad')"]
-        data["commands"][0]["cwd"] = "."
+        command = json.loads((KIT_ROOT / "docs/_system/commands.json").read_text())["commands"][0]
+        command.update({"argv": [sys.executable, "-c", f"open({str(marker)!r},'w').write('bad')"], "cwd": "."})
+        data["commands"] = [command]
         p.write_text(json.dumps(data))
         docctl.validate(self.root)
         self.assertFalse(marker.exists())
@@ -452,11 +498,11 @@ class InstallTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_default_install_creates_only_system_and_reference_sources(self):
+    def test_default_install_creates_only_lightweight_entries_and_configuration(self):
         result = init_docs.install(KIT_ROOT, self.root)
         self.assertEqual(result["business_documents"], [])
         self.assertEqual(sorted(p.name for p in (self.root / "docs").iterdir()),
-                         ["AGENTS.md", "README.md", "_system", "_templates", "_tools"])
+                         [".ai-docs.json", "AGENTS.md", "README.md"])
         self.assertTrue((self.root / "AGENTS.md").is_file())
         self.assertFalse((self.root / "_AGENTS.md").exists())
 

@@ -42,7 +42,9 @@ class PortablePackageTests(unittest.TestCase):
         self.assertTrue(result["applied"])
         self.assertTrue(result["validation"]["structure"]["ok"])
         self.assertFalse(result["validation"]["strict"]["ok"])
-        self.assertTrue((self.target / "docs/_system/installation.json").is_file())
+        self.assertTrue((self.target / "docs/.ai-docs.json").is_file())
+        self.assertEqual({p.relative_to(self.target).as_posix() for p in self.target.rglob("*") if p.is_file()},
+                         {"README.md", "AGENTS.md", "docs/README.md", "docs/AGENTS.md", "docs/.ai-docs.json"})
         self.assertFalse((self.target / "docs/product").exists())
 
     def test_same_package_repeated_application_is_noop(self):
@@ -63,7 +65,7 @@ class PortablePackageTests(unittest.TestCase):
         applied = self.run_cli("--apply", "--plan-file", str(self.plan))
         self.assertNotEqual(applied.returncode, 0)
         self.assertEqual((self.target / "README.md").read_text(), "Concurrent project facts.\n")
-        self.assertFalse((self.target / "docs/_system/installation.json").exists())
+        self.assertFalse((self.target / "docs/.ai-docs.json").exists())
 
     def test_saved_plan_for_another_target_is_rejected(self):
         self.assertEqual(self.run_cli("--plan-file", str(self.plan)).returncode, 0)
@@ -110,6 +112,76 @@ class PortablePackageTests(unittest.TestCase):
         self.assertTrue(result["validation"]["structure"]["ok"])
         self.assertEqual(result["action_counts"], summary["action_counts"])
         self.assertEqual(result["conflicts"], complete["conflicts"])
+
+    def test_external_docctl_uses_readonly_resources_for_full_business_document_lifecycle(self):
+        applied = self.run_cli("--apply")
+        self.assertEqual(applied.returncode, 0, applied.stdout + applied.stderr)
+        resources = self.skill / "assets/templates"
+        tool = resources / "docs/_tools/docctl.py"
+        before = {p.relative_to(resources): (p.read_bytes(), p.stat().st_mtime_ns)
+                  for p in resources.rglob("*") if p.is_file()}
+        permissions = {p: p.stat().st_mode & 0o777 for p in resources.rglob("*")}
+        for path in permissions:
+            path.chmod(0o555 if path.is_dir() else 0o444)
+
+        def run_tool(*arguments):
+            result = subprocess.run([sys.executable, "-B", str(tool), "--root", str(self.target),
+                                     "--resources", str(resources), *arguments], cwd=self.work,
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            return json.loads(result.stdout)
+
+        try:
+            self.assertTrue(run_tool("check")["ok"])
+            run_tool("new", "feature", "FEAT-1", "first", "--title", "First behavior")
+            run_tool("new", "feature", "FEAT-2", "second", "--title", "Second behavior")
+            compact = self.target / "docs/product/features.md"
+            self.assertTrue(compact.is_file())
+            watcher = self.target / "docs/watcher.md"
+            watcher.write_text("[First](product/features.md#feat-1)\n")
+            run_tool("new", "feature", "FEAT-3", "third", "--title", "Third behavior")
+            self.assertFalse(compact.exists())
+            self.assertIn("product/features/FEAT-1-first.md#feat-1", watcher.read_text())
+            records = run_tool("find", "--type", "feature")
+            self.assertEqual({record["id"] for record in records["records"]}, {"FEAT-1", "FEAT-2", "FEAT-3"})
+            self.assertEqual(run_tool("route", "feature")[0]["id"], "feature")
+            self.assertEqual(run_tool("index")["records"], 3)
+            self.assertTrue(run_tool("check")["ok"])
+            for folder in ("_system", "_tools", "_templates"):
+                self.assertFalse((self.target / "docs" / folder).exists())
+            self.assertEqual(before, {p.relative_to(resources): (p.read_bytes(), p.stat().st_mtime_ns)
+                                      for p in resources.rglob("*") if p.is_file()})
+        finally:
+            for path, mode in permissions.items():
+                path.chmod(mode)
+
+    def test_docctl_rejects_a_missing_external_resource_package_without_project_writes(self):
+        applied = self.run_cli("--apply")
+        self.assertEqual(applied.returncode, 0, applied.stdout + applied.stderr)
+        before = {p.relative_to(self.target): p.read_bytes() for p in self.target.rglob("*") if p.is_file()}
+        resources = self.skill / "assets/templates"
+        result = subprocess.run([sys.executable, "-B", str(resources / "docs/_tools/docctl.py"),
+                                 "--root", str(self.target), "--resources", str(self.work / "missing"),
+                                 "new", "feature", "FEAT-1", "first", "--title", "First behavior"],
+                                cwd=self.work, capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(before, {p.relative_to(self.target): p.read_bytes()
+                                  for p in self.target.rglob("*") if p.is_file()})
+
+    def test_docctl_write_commands_without_an_explicit_project_root_preserve_the_skill(self):
+        resources = self.skill / "assets/templates"
+        tool = resources / "docs/_tools/docctl.py"
+        before_files = {p.relative_to(resources): (p.read_bytes(), p.stat().st_mtime_ns)
+                        for p in resources.rglob("*") if p.is_file()}
+        before_paths = {p.relative_to(resources) for p in resources.rglob("*")}
+        for arguments in (("new", "feature", "FEAT-1", "first", "--title", "First behavior"), ("index",)):
+            with self.subTest(arguments=arguments):
+                result = subprocess.run([sys.executable, "-B", str(tool), "--resources", str(resources),
+                                         *arguments], cwd=self.work, capture_output=True, text=True)
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual(before_files, {p.relative_to(resources): (p.read_bytes(), p.stat().st_mtime_ns)
+                                                for p in resources.rglob("*") if p.is_file()})
+                self.assertEqual(before_paths, {p.relative_to(resources) for p in resources.rglob("*")})
 
 
 if __name__ == "__main__":

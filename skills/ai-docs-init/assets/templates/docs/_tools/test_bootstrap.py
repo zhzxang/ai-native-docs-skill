@@ -20,7 +20,10 @@ import init_docs
 
 
 KIT_ROOT = Path(__file__).resolve().parents[2]
-MANIFEST = "docs/_system/installation.json"
+CONFIG = "docs/.ai-docs.json"
+LEGACY_MANIFEST = "docs/_system/installation.json"
+ENTRY_FILES = {"README.md", "AGENTS.md", "docs/README.md", "docs/AGENTS.md"}
+LIGHT_FILES = ENTRY_FILES | {CONFIG}
 BEGIN = "<!-- ai-docs-init:begin -->"
 END = "<!-- ai-docs-init:end -->"
 
@@ -63,29 +66,67 @@ class BootstrapTests(unittest.TestCase):
         return init_docs.bootstrap(self.source, self.target, dry_run=False, **kwargs)
 
     def manifest(self):
-        return json.loads((self.target / MANIFEST).read_text())
+        return json.loads((self.target / CONFIG).read_text())["installation"]
 
     def upgrade_source(self):
         package = self.source / "docs/_system/package.json"
         data = json.loads(package.read_text())
-        data["system_version"] = "2.0.0"
+        data["system_version"] = "2.1.0"
         package.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
         return data
 
-    def test_new_project_installs_minimal_system_with_ownership_manifest(self):
+    def config(self):
+        return json.loads((self.target / CONFIG).read_text())
+
+    def assert_light_layout(self):
+        self.assertEqual({path.relative_to(self.target).as_posix() for path in self.target.rglob("*")
+                          if path.is_file()}, LIGHT_FILES)
+        self.assertEqual(sorted(path.name for path in (self.target / "docs").iterdir()),
+                         [".ai-docs.json", "AGENTS.md", "README.md"])
+        for folder in ("_system", "_tools", "_templates"):
+            self.assertFalse((self.target / "docs" / folder).exists())
+
+    def legacy_project(self):
+        """Recreate a previous full install using baselines recorded before customization."""
+        owned_files = {}
+        for name in ("_system", "_tools", "_templates"):
+            for source in sorted((self.source / "docs" / name).rglob("*")):
+                if not source.is_file() or "__pycache__" in source.parts or source.suffix == ".pyc":
+                    continue
+                relative = source.relative_to(self.source).as_posix()
+                self.write(relative, source.read_bytes())
+                owned_files[relative] = {"sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+        entries = {"_README.md": "README.md", "_AGENTS.md": "AGENTS.md",
+                   "docs/_README.md": "docs/README.md", "docs/_AGENTS.md": "docs/AGENTS.md"}
+        owned_blocks = {}
+        for source, relative in entries.items():
+            block = (BEGIN + "\n" + (self.source / source).read_text().strip() + "\n" + END + "\n")
+            self.write(relative, block)
+            owned_blocks[relative] = {"id": "ai-docs-init", "sha256": hashlib.sha256(block.encode()).hexdigest()}
+        self.write(LEGACY_MANIFEST, json.dumps({"schema_version": 1, "system_version": "1.0.0",
+                   "status": "installed", "owned_files": owned_files, "owned_blocks": owned_blocks}))
+        return owned_files
+
+    def test_new_project_installs_exactly_four_entries_and_one_sparse_configuration(self):
+        source_before = snapshot(self.source)
         result = self.apply()
         self.assertTrue(result["applied"])
         self.assertEqual(result["mode"], "init")
         self.assertFalse(result["conflicts"])
-        self.assertEqual(sorted(path.name for path in (self.target / "docs").iterdir()),
-                         ["AGENTS.md", "README.md", "_system", "_templates", "_tools"])
-        self.assertFalse((self.target / "docs/project").exists())
-        manifest = self.manifest()
-        self.assertEqual(manifest["system_version"],
-                         json.loads((self.source / "docs/_system/package.json").read_text())["system_version"])
-        self.assertIn("docs/_tools/docctl.py", manifest["owned_files"])
-        for relative, record in manifest["owned_files"].items():
-            self.assertEqual(record["sha256"], hashlib.sha256((self.target / relative).read_bytes()).hexdigest())
+        self.assert_light_layout()
+        config = self.config()
+        self.assertEqual(config["schema_version"], 1)
+        self.assertEqual(config["system"], {"name": "ai-docs-system", "version": "2.0.0"})
+        self.assertEqual(config.get("locations", []), [])
+        self.assertEqual(config.get("commands", []), [])
+        self.assertNotIn("owned_files", self.manifest())
+        self.assertEqual(set(self.manifest()["owned_blocks"]), ENTRY_FILES)
+        for relative, record in self.manifest()["owned_blocks"].items():
+            raw = (self.target / relative).read_bytes()
+            self.assertIn(BEGIN.encode(), raw)
+            self.assertIn(END.encode(), raw)
+            self.assertEqual(record["sha256"], hashlib.sha256(raw).hexdigest())
+        self.assertEqual(snapshot(self.source), source_before)
 
     def test_overview_requires_a_valid_title_and_summary_pair_without_writing(self):
         invalid = [
@@ -118,7 +159,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(sorted(path.name for path in (self.target / "docs/project").iterdir()),
                          ["overview.md"])
         self.assertFalse((self.target / "docs/engineering").exists())
-        self.assertNotIn(relative, self.manifest()["owned_files"])
+        self.assertNotIn(relative, self.manifest().get("owned_files", {}))
         self.assertNotIn(relative, self.manifest()["owned_blocks"])
         before = snapshot(self.target)
         repeated = self.apply(**arguments)
@@ -132,7 +173,7 @@ class BootstrapTests(unittest.TestCase):
         result = self.apply(overview_title="New requested title", overview_summary="New requested summary")
         self.assertEqual((self.target / relative).read_bytes(), approved)
         self.assertIn(relative, [conflict["path"] for conflict in result["conflicts"]])
-        self.assertNotIn(relative, self.manifest()["owned_files"])
+        self.assertNotIn(relative, self.manifest().get("owned_files", {}))
         self.assertNotIn(relative, self.manifest()["owned_blocks"])
 
     def test_adopt_preserves_all_existing_entries_and_historical_content(self):
@@ -162,11 +203,12 @@ class BootstrapTests(unittest.TestCase):
     def test_install_does_not_infer_project_facts_or_commands(self):
         self.write("package.json", '{"name":"existing-app","scripts":{"test":"touch unsafe"}}\n')
         self.apply()
-        self.assertEqual((self.target / "docs/_system/project-map.json").read_bytes(),
-                         (self.source / "docs/_system/project-map.json").read_bytes())
-        self.assertEqual((self.target / "docs/_system/commands.json").read_bytes(),
-                         (self.source / "docs/_system/commands.json").read_bytes())
+        config = self.config()
+        self.assertFalse(config.get("project", {}).get("name"))
+        self.assertEqual(config.get("locations", []), [])
+        self.assertEqual(config.get("commands", []), [])
         self.assertFalse((self.target / "unsafe").exists())
+        self.assertFalse((self.target / "docs/_system").exists())
 
     def test_scan_finds_historical_documents_without_mutating_or_traversing_dependencies(self):
         self.write("README.md", "# Existing product\n## Purpose\nOriginal prose.\n")
@@ -179,6 +221,18 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(documents["README.md"]["headings"], ["Existing product", "Purpose"])
         self.assertTrue(documents["docs/legacy/decision.md"]["has_doc_meta"])
         self.assertNotIn("node_modules/package/README.md", documents)
+        self.assertEqual(snapshot(self.target), before)
+
+    def test_user_config_formatting_and_facts_survive_repeat_without_writes(self):
+        self.apply()
+        config = self.config()
+        config["project"]["name"] = "真实项目名称"
+        config["project_custom"] = {"confirmed": "保留扩展字段"}
+        self.write(CONFIG, json.dumps(config, ensure_ascii=False, indent=4) + "\n\n")
+        before = snapshot(self.target)
+        result = self.apply()
+        self.assertEqual(result["status"], "noop")
+        self.assertEqual(result["actions"], [])
         self.assertEqual(snapshot(self.target), before)
 
     def test_repeated_install_is_noop_including_timestamps_and_manifest(self):
@@ -208,50 +262,46 @@ class BootstrapTests(unittest.TestCase):
         self.assertTrue(result["actions"])
         self.assertEqual(snapshot(self.target), before)
 
-    def test_upgrade_updates_unedited_system_assets_and_version(self):
+    def test_upgrade_changes_version_without_copying_shared_assets(self):
         self.apply()
         relative = "docs/_system/writing-policy.md"
-        new = (self.source / relative).read_bytes() + b"\nNew package policy.\n"
-        self.write(relative, new, root=self.source)
+        self.write(relative, (self.source / relative).read_bytes() + b"\nNew shared policy.\n", root=self.source)
         self.upgrade_source()
         result = self.apply(mode="upgrade")
-        self.assertEqual(result["mode"], "upgrade")
         self.assertFalse(result["conflicts"])
-        self.assertEqual((self.target / relative).read_bytes(), new)
-        self.assertEqual(self.manifest()["system_version"], "2.0.0")
-        self.assertEqual(self.manifest()["owned_files"][relative]["sha256"],
-                         hashlib.sha256(new).hexdigest())
+        self.assertEqual(self.config()["system"]["version"], "2.1.0")
+        self.assertEqual(self.manifest()["system_version"], "2.1.0")
+        self.assert_light_layout()
 
-    def test_upgrade_preserves_modified_asset_and_reports_conflict(self):
+    def test_upgrade_keeps_confirmed_project_facts_commands_and_unknown_fields(self):
         self.apply()
-        relative = "docs/_system/writing-policy.md"
-        original_record = self.manifest()["owned_files"][relative]
-        local = (self.target / relative).read_bytes() + b"\nLocal project rules.\n"
-        self.write(relative, local)
-        self.write(relative, b"Upstream replacement policy.\n", root=self.source)
+        config = self.config()
+        config["project"]["name"] = "Confirmed existing product"
+        config["locations"] = [{"id": "application", "kind": "code", "enabled": True,
+                                 "repository": ".", "paths": ["src/application.py"],
+                                 "verified_at": None, "verification_ref": "record:reviewed"}]
+        config["commands"] = [{"id": "verify", "argv": ["python3", "-m", "unittest"], "cwd": ".",
+                                "side_effect": "local-write", "verification_ref": "record:reviewed"}]
+        config["custom_project_setting"] = {"keep": "User-owned value"}
+        self.write(CONFIG, json.dumps(config))
+        before = {key: config[key] for key in ("project", "locations", "commands", "custom_project_setting")}
         self.upgrade_source()
         result = self.apply(mode="upgrade")
-        self.assertIn(relative, [conflict["path"] for conflict in result["conflicts"]])
-        self.assertEqual((self.target / relative).read_bytes(), local)
-        self.assertEqual(self.manifest()["owned_files"][relative], original_record)
+        self.assertFalse(result["conflicts"])
+        for key, value in before.items():
+            self.assertEqual(self.config()[key], value)
 
-    def test_upgrade_keeps_confirmed_project_map_and_command_facts(self):
-        self.apply()
-        project_path = self.target / "docs/_system/project-map.json"
-        project = json.loads(project_path.read_text())
-        project["project"]["name"] = "Confirmed existing product"
-        project["locations"][0]["paths"] = ["src/application.py"]
-        project_path.write_text(json.dumps(project, ensure_ascii=False))
-        commands_path = self.target / "docs/_system/commands.json"
-        commands = json.loads(commands_path.read_text())
-        commands["commands"][0].update({"argv": ["python3", "-m", "venv", ".venv"],
-                                       "cwd": ".", "verification_ref": "record:setup-reviewed"})
-        commands_path.write_text(json.dumps(commands, ensure_ascii=False))
-        facts = {path: path.read_bytes() for path in (project_path, commands_path)}
-        self.upgrade_source()
-        self.apply(mode="upgrade")
-        for path, content in facts.items():
-            self.assertEqual(path.read_bytes(), content)
+    def test_existing_sparse_configuration_is_adopted_without_losing_user_fields(self):
+        config = {"schema_version": 1, "system": {"name": "ai-docs-system", "version": "2.0.0"},
+                  "project": {"name": "Original product", "owner": "team", "operating_mode": "bootstrap"},
+                  "work_tracking": {"mode": "repository", "source": "docs/work/items", "external_ref": None},
+                  "locations": [], "commands": [], "custom": {"original": True}}
+        self.write(CONFIG, json.dumps(config))
+        result = self.apply(mode="adopt")
+        self.assertFalse(result["conflicts"])
+        for key, value in config.items():
+            self.assertEqual(self.config()[key], value)
+        self.assertEqual(set(self.manifest()["owned_blocks"]), ENTRY_FILES)
 
     def test_upgrade_keeps_edits_outside_managed_entry_block(self):
         self.write("docs/README.md", "# Real project docs\nOriginal facts.\n")
@@ -282,41 +332,235 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(path.read_text(), content)
         self.assertEqual(self.manifest()["owned_blocks"]["AGENTS.md"], baseline)
 
-    def test_unknown_system_file_collision_is_not_overwritten_or_claimed(self):
-        relative = "docs/_tools/docctl.py"
-        local = b"# Existing unrelated tool with the same name.\n"
-        self.write(relative, local)
-        result = self.apply(mode="adopt")
-        self.assertEqual(result["status"], "partial")
-        self.assertEqual((self.target / relative).read_bytes(), local)
-        self.assertIn(relative, [conflict["path"] for conflict in result["conflicts"]])
-        self.assertNotIn(relative, self.manifest()["owned_files"])
-
-    def test_existing_unowned_matching_asset_is_not_claimed(self):
-        relative = "docs/_templates/feature.md"
-        local = (self.source / relative).read_bytes()
-        self.write(relative, local)
+    def test_existing_unowned_resource_folders_remain_user_owned(self):
+        original = {"docs/_tools/docctl.py": b"# Existing unrelated project tool.\n",
+                    "docs/_templates/feature.md": b"# Existing project-specific template.\n",
+                    "docs/_system/custom-guidelines.md": b"# Historic project-specific guidelines.\n"}
+        for relative, content in original.items():
+            self.write(relative, content)
         self.apply(mode="adopt")
-        self.assertEqual((self.target / relative).read_bytes(), local)
-        self.assertNotIn(relative, self.manifest()["owned_files"])
+        for relative, content in original.items():
+            self.assertEqual((self.target / relative).read_bytes(), content)
+        self.assertNotIn("owned_files", self.manifest())
 
-    def test_schema_one_registry_blocks_mixed_installation_without_writing(self):
-        self.write("README.md", "# Legacy project\n")
+    def test_legacy_full_install_imports_project_facts_and_removes_only_owned_resources(self):
+        self.legacy_project()
+        project_path = self.target / "docs/_system/project-map.json"
+        project = json.loads(project_path.read_text())
+        project["project"]["name"] = "Confirmed legacy product"
+        project["locations"][0]["paths"] = ["src/app.py"]
+        project_path.write_text(json.dumps(project))
+        commands_path = self.target / "docs/_system/commands.json"
+        commands = json.loads(commands_path.read_text())
+        commands["commands"][0].update({"argv": ["python3", "-m", "venv", ".venv"], "cwd": "."})
+        commands_path.write_text(json.dumps(commands))
+        self.write("docs/legacy/decision.md", "# Approved historic decision\nOriginal project evidence.\n")
+        result = self.apply()
+        self.assertTrue(result["applied"])
+        config = self.config()
+        self.assertEqual(config["project"], project["project"])
+        self.assertEqual(config["locations"], project["locations"])
+        self.assertEqual(config["commands"], commands["commands"])
+        self.assertIn("migration", config)
+        self.assertFalse((self.target / "docs/_templates/feature.md").exists())
+        self.assertFalse((self.target / "docs/_tools/docctl.py").exists())
+        self.assertEqual((self.target / "docs/legacy/decision.md").read_text(),
+                         "# Approved historic decision\nOriginal project evidence.\n")
+        self.assertTrue(project_path.exists())
+        self.assertTrue(commands_path.exists())
+        self.assertIn("docs/_system/project-map.json", [item["path"] for item in result["conflicts"]])
+        self.assertIn("docs/_system/commands.json", [item["path"] for item in result["conflicts"]])
+
+    def test_legacy_modified_assets_custom_files_and_referenced_sources_are_preserved(self):
+        self.legacy_project()
+        local = b"# Project-specific approved policy.\n"
+        self.write("docs/_system/writing-policy.md", local)
+        self.write("docs/_templates/custom.md", "# User-owned legacy template\n")
+        self.write("docs/legacy-guide.md", "[Approved rule](_system/authority.md)\n")
+        authority = (self.target / "docs/_system/authority.md").read_bytes()
+        result = self.apply()
+        self.assertEqual((self.target / "docs/_system/writing-policy.md").read_bytes(), local)
+        self.assertTrue((self.target / "docs/_templates/custom.md").exists())
+        self.assertEqual((self.target / "docs/_system/authority.md").read_bytes(), authority)
+        self.assertIn("docs/_system/writing-policy.md", [item["path"] for item in result["conflicts"]])
+        self.assertIn("docs/_system/authority.md", [item["path"] for item in result["conflicts"]])
+
+    def test_legacy_migration_keeps_each_known_fact_once_and_preserves_unknown_fields(self):
+        self.legacy_project()
+        project_path = self.target / "docs/_system/project-map.json"
+        project = json.loads(project_path.read_text())
+        project["project"]["name"] = "Unique confirmed project fact"
+        project["unknown_existing_field"] = {"evidence": "Original user-maintained evidence"}
+        project_path.write_text(json.dumps(project))
+        commands_path = self.target / "docs/_system/commands.json"
+        commands = json.loads(commands_path.read_text())
+        commands["unknown_command_field"] = "Original command registry note"
+        commands_path.write_text(json.dumps(commands))
+        self.apply()
+        config = self.config()
+        self.assertEqual(config["project"], project["project"])
+        self.assertEqual(config["commands"], commands["commands"])
+        self.assertEqual(json.dumps(config).count("Unique confirmed project fact"), 1)
+        legacy = config["migration"]["legacy_fields"]
+        self.assertEqual(legacy["docs/_system/project-map.json"]["unknown_existing_field"],
+                         project["unknown_existing_field"])
+        self.assertEqual(legacy["docs/_system/commands.json"]["unknown_command_field"],
+                         commands["unknown_command_field"])
+        for data in legacy.values():
+            self.assertFalse(set(data) & {"project", "work_tracking", "locations", "readiness", "commands"})
+        self.assertNotIn("legacy_configurations", config["migration"])
+        self.assertNotIn("collections", config.get("overrides", {}))
+        self.assertNotIn("routes", config.get("overrides", {}))
+
+    def test_unchanged_legacy_install_migrates_to_exact_lightweight_layout(self):
+        self.legacy_project()
+        result = self.apply()
+        self.assertTrue(result["applied"])
+        self.assertFalse(result["conflicts"])
+        self.assert_light_layout()
+        self.assertNotIn("collections", self.config().get("overrides", {}))
+        self.assertNotIn("routes", self.config().get("overrides", {}))
+
+    def test_legacy_reference_outside_managed_entry_block_protects_the_owned_resource(self):
+        self.legacy_project()
+        relative = "docs/_system/execution-policy.md"
+        original = (self.target / relative).read_bytes()
+        path = self.target / "AGENTS.md"
+        outside = b"\nProject instructions: [approved rules](docs/_system/execution-policy.md).\n"
+        path.write_bytes(path.read_bytes() + outside)
+        result = self.apply()
+        self.assertEqual((self.target / relative).read_bytes(), original)
+        self.assertTrue(path.read_bytes().endswith(outside))
+        self.assertIn(relative, [item["path"] for item in result["conflicts"]])
+
+    def test_custom_legacy_template_keeps_its_referenced_owned_protocol(self):
+        self.legacy_project()
+        relative = "docs/_system/authority.md"
+        original = (self.target / relative).read_bytes()
+        custom = "docs/_templates/custom-project-template.md"
+        body = "# User-owned project template\n[Approved authority](../_system/authority.md)\n"
+        self.write(custom, body)
+        result = self.apply()
+        self.assertEqual((self.target / custom).read_text(), body)
+        self.assertTrue((self.target / relative).exists())
+        self.assertEqual((self.target / relative).read_bytes(), original)
+        self.assertIn(relative, [item["path"] for item in result["conflicts"]])
+
+    def test_legacy_tool_referenced_by_active_command_is_preserved_without_execution(self):
+        self.legacy_project()
+        relative = "docs/_tools/docctl.py"
+        original = (self.target / relative).read_bytes()
+        path = self.target / "docs/_system/commands.json"
+        commands = json.loads(path.read_text())
+        commands["commands"][0].update({"argv": [sys.executable, relative, "check"], "cwd": "."})
+        path.write_text(json.dumps(commands))
+        result = self.apply()
+        self.assertEqual((self.target / relative).read_bytes(), original)
+        self.assertEqual(self.config()["commands"], commands["commands"])
+        self.assertIn(relative, [item["path"] for item in result["conflicts"]])
+
+    def test_legacy_deletion_failure_restores_retired_resources_and_existing_entries(self):
+        self.legacy_project()
+        before = {p.relative_to(self.target).as_posix(): p.read_bytes()
+                  for p in self.target.rglob("*") if p.is_file()}
+        before_directories = {p.relative_to(self.target).as_posix()
+                              for p in self.target.rglob("*") if p.is_dir()}
+        original = Path.unlink
+        sentinel = self.target / "docs/_templates/feature.md"
+        injected = False
+
+        def fail_one_deletion(path, *args, **kwargs):
+            nonlocal injected
+            if path == sentinel and not injected:
+                injected = True
+                raise OSError("Injected failure after earlier owned resources were deleted")
+            return original(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "unlink", new=fail_one_deletion):
+            with self.assertRaises((init_docs.InstallError, OSError)):
+                self.apply()
+        self.assertTrue(injected)
+        self.assertEqual(before, {p.relative_to(self.target).as_posix(): p.read_bytes()
+                                  for p in self.target.rglob("*") if p.is_file()})
+        self.assertEqual(before_directories, {p.relative_to(self.target).as_posix()
+                                             for p in self.target.rglob("*") if p.is_dir()})
+        self.assertFalse((self.target / ".ai-docs-init.lock").exists())
+
+    def test_legacy_saved_plan_rechecks_new_project_references_before_deleting_resources(self):
+        self.legacy_project()
+        plan = init_docs.plan_install(self.source, self.target)
+        relative = "docs/_system/authority.md"
+        self.assertIn(relative, [item["path"] for item in plan["actions"] if item["operation"] == "delete"])
+        self.write("docs/new-approved-guide.md", "[Approved authority](_system/authority.md)\n")
+        before = {p.relative_to(self.target).as_posix(): p.read_bytes()
+                  for p in self.target.rglob("*") if p.is_file()}
+        try:
+            result = self.apply(plan=plan)
+        except init_docs.InstallError:
+            pass
+        else:
+            self.assertFalse(result["applied"])
+            self.assertEqual(result["status"], "blocked")
+        self.assertEqual(before, {p.relative_to(self.target).as_posix(): p.read_bytes()
+                                  for p in self.target.rglob("*") if p.is_file()})
+
+    def test_legacy_schema_one_registry_blocks_unsafe_protocol_migration(self):
+        self.legacy_project()
         self.write("docs/_system/collections.json", '{"schema_version":1,"collections":[]}\n')
-        self.write("docs/_tools/docctl.py", "# Legacy registry writer\n")
-        before = snapshot(self.target)
-        result = self.apply(mode="adopt")
-        self.assertEqual(result["status"], "blocked")
-        self.assertFalse(result["applied"])
-        self.assertFalse(result["actions"])
-        self.assertEqual(snapshot(self.target), before)
-        self.assertFalse((self.target / MANIFEST).exists())
-
-    def test_schema_one_routes_alone_also_block_mixed_installation(self):
-        self.write("docs/_system/routes.json", '{"schema_version":1,"routes":[]}\n')
         before = snapshot(self.target)
         result = self.apply()
         self.assertEqual(result["status"], "blocked")
+        self.assertFalse(result["applied"])
+        self.assertEqual(snapshot(self.target), before)
+
+    def test_conflicting_system_and_installation_versions_are_blocked(self):
+        self.apply()
+        config = self.config()
+        config["system"]["version"] = "99.0.0"
+        self.write(CONFIG, json.dumps(config))
+        before = snapshot(self.target)
+        result = self.apply(mode="upgrade")
+        self.assertEqual(result["status"], "blocked")
+        self.assertFalse(result["applied"])
+        self.assertEqual(snapshot(self.target), before)
+
+    def test_invalid_collection_override_is_blocked_without_lowering_the_threshold(self):
+        self.apply()
+        config = self.config()
+        registry = json.loads((self.source / "docs/_system/collections.json").read_text())
+        registry["defaults"]["compact_max_items"] = 99
+        config["overrides"] = {"collections": registry}
+        self.write(CONFIG, json.dumps(config))
+        before = snapshot(self.target)
+        result = self.apply(mode="upgrade")
+        self.assertEqual(result["status"], "blocked")
+        self.assertFalse(result["applied"])
+        self.assertEqual(snapshot(self.target), before)
+
+    def test_unknown_route_override_is_blocked_without_installing_shared_resources(self):
+        self.apply()
+        config = self.config()
+        routes = json.loads((self.source / "docs/_system/routes.json").read_text())
+        routes["routes"][0]["must_read"] = [{"collection": "unknown-kind"}]
+        config["overrides"] = {"routes": routes}
+        self.write(CONFIG, json.dumps(config))
+        before = snapshot(self.target)
+        result = self.apply(mode="upgrade")
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(snapshot(self.target), before)
+        self.assertFalse((self.target / "docs/_system").exists())
+
+    def test_custom_route_requiring_an_unavailable_shared_protocol_is_blocked_before_upgrade(self):
+        self.apply()
+        config = self.config()
+        routes = json.loads((self.source / "docs/_system/routes.json").read_text())
+        routes["routes"][0]["must_read"].append("docs/_system/missing-approved-policy.md")
+        config["overrides"] = {"routes": routes}
+        self.write(CONFIG, json.dumps(config))
+        before = snapshot(self.target)
+        result = self.apply(mode="upgrade")
+        self.assertEqual(result["status"], "blocked")
+        self.assertFalse(result["applied"])
         self.assertEqual(snapshot(self.target), before)
 
     def test_destination_symlink_cannot_write_outside_project(self):
@@ -350,7 +594,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(snapshot(outside), {})
 
     def test_source_symlink_is_rejected_before_any_target_write(self):
-        original = self.source / "docs/_templates/feature.md"
+        original = self.source / "_AGENTS.md"
         outside = self.work / "source-outside.md"
         original.rename(outside)
         original.symlink_to(outside)
@@ -391,14 +635,13 @@ class BootstrapTests(unittest.TestCase):
             self.assertFalse(result["applied"])
         self.assertEqual(snapshot(self.target), before)
 
-    def test_manifest_path_traversal_is_blocked_without_writing(self):
-        self.apply()
+    def test_legacy_manifest_path_traversal_is_blocked_without_writing(self):
+        self.legacy_project()
         outside = self.write("outside.md", "Outside file must remain unchanged.\n", root=self.work)
-        data = self.manifest()
+        data = json.loads((self.target / LEGACY_MANIFEST).read_text())
         data["owned_files"]["../outside.md"] = {
-            "sha256": hashlib.sha256(outside.read_bytes()).hexdigest()
-        }
-        self.write(MANIFEST, json.dumps(data))
+            "sha256": hashlib.sha256(outside.read_bytes()).hexdigest()}
+        self.write(LEGACY_MANIFEST, json.dumps(data))
         before = snapshot(self.target)
         try:
             result = self.apply(mode="upgrade")
@@ -418,7 +661,9 @@ class BootstrapTests(unittest.TestCase):
         data["owned_blocks"][relative] = {
             "id": "ai-docs-init", "sha256": hashlib.sha256(history.read_bytes()).hexdigest()
         }
-        self.write(MANIFEST, json.dumps(data))
+        config = json.loads((self.target / CONFIG).read_text())
+        config["installation"] = data
+        self.write(CONFIG, json.dumps(config))
         before = snapshot(self.target)
         try:
             result = self.apply(mode="upgrade")
@@ -434,7 +679,9 @@ class BootstrapTests(unittest.TestCase):
         self.apply()
         data = self.manifest()
         data["owned_blocks"]["AGENTS.md"]["id"] = "another-tool"
-        self.write(MANIFEST, json.dumps(data))
+        config = json.loads((self.target / CONFIG).read_text())
+        config["installation"] = data
+        self.write(CONFIG, json.dumps(config))
         before = snapshot(self.target)
         try:
             result = self.apply(mode="upgrade")

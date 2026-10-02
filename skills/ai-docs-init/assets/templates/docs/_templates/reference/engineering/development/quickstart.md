@@ -18,7 +18,7 @@ approval_ref: null
 {{操作系统、运行时及版本、必要账户和安全边界。}} 依赖版本以项目锁文件或选定的版本来源为依据，不在这里手工复制整份依赖清单。
 
 ## 代码与命令定位
-实际目录见 `docs/_system/project-map.json`；具体命令只在 `docs/_system/commands.json` 维护。这里按顺序引用命令 ID，不猜测 pnpm、npm、uv、cargo 等技术栈。
+实际目录与具体命令统一在目标项目的 `docs/.ai-docs.json` 登记。这里按顺序引用命令 ID，不猜测 pnpm、npm、uv、cargo 等技术栈。
 
 | 步骤 | 命令 ID 或操作入口 | 预期结果 | 失败处理 |
 |---|---|---|---|

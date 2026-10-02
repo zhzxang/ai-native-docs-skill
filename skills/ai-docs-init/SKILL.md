@@ -1,71 +1,60 @@
 ---
 name: ai-docs-init
-description: "为新项目初始化、为已有项目接入或迁移、升级按需展开的 AI 文档系统。用户希望建立这套文档体系或更新其安装时使用；日常功能开发与普通文档回写遵守项目内协议。"
+description: "为新项目初始化、为已有项目接入或迁移、升级轻量 AI 文档系统。建立或更新这套文档体系时使用；日常文档写入由项目入口引导按需读取 Skill 资源。"
 ---
 
-# AI 文档系统初始化
+# 轻量 AI 文档系统初始化
 
-把项目接入“逻辑分类固定、文件按需创建、第 3 个独立条目展开”的文档系统。安装只建立入口、规则、配置、工具和集中模板；项目事实有确认内容后才写入。日常写入由目标项目的 `AGENTS.md`、`docs/AGENTS.md` 和 `docs/_system/writing-policy.md` 承担。
+初始化只合并四个 README/AGENTS 入口并保存 `docs/.ai-docs.json`，确认内容后才创建业务文档。通用规则、工具和模板留在本 Skill 的 `assets/templates/`，不在目标项目创建 `_system/`、`_tools/` 或 `_templates/`，没有完整安装选项。
 
-客户端是否自动发现当前 Skill 目录取决于其实际配置；也可以显式引用本 `SKILL.md` 使用。不要把保存到项目目录误报为已全局安装。
+## 模式与资源
 
-## 选择模式
+`auto` 根据盘点选择 `init`（新项目）、`adopt`（已有项目接入）或 `upgrade`（已安装项目升级）；三种模式都是轻量布局。老项目、历史迁移、旧完整安装或本地冲突先读 [existing-project.md](references/existing-project.md)。模式名称不授予覆盖原内容的权限。
 
-| 模式 | 适用情况 | 结果 |
-|---|---|---|
-| `init` | 尚未建立文档体系的新项目 | 最小安装，按需建立已确认的项目事实 |
-| `adopt` | 有代码、文档或执行约定，尚未完整接入本系统 | 保留原内容，增量合并入口，配置定位；历史迁移按明确范围执行 |
-| `upgrade` | 已安装本系统 | 更新兼容的系统资产，保留配置、事实和本地定制 |
-
-默认 `auto` 由盘点选择模式。先核验结果；存在旧版系统但没有安装清单时，读取 [existing-project.md](references/existing-project.md) 的无清单升级流程。不要把模式名称视为覆盖已有内容的授权。
+通过本 Skill 的实际位置定位脚本和资源，支持复制整个目录后独立使用。`docs/.ai-docs.json` 的 `system.version` 固定资源版本；找不到匹配资源时报告缺口，停止依赖它的写入或检查，不猜测格式或复制资源作为回退。入口必须显式引导日常写入读取 Skill，不依赖自动触发，不把某台机器绝对路径写入项目。保存在项目 `skills/` 中不代表已全局安装。
 
 ## 执行
 
-1. 确认目标项目根目录。读取适用的项目与局部执行约定，检查分支和工作区差异，盘点已有入口、代码配置、文档和系统版本。已有项目、历史迁移、冲突或本地定制时，先读 [existing-project.md](references/existing-project.md)。
-2. 从本 Skill 所在目录定位 `scripts/bootstrap.py`，使用 Python 3.10 或更高版本。它通过自身路径读取打包模板，可从任意工作目录运行，也可单独复制整个 Skill 后使用。
+1. 确认目标根，读取适用约定、工作区差异和已有资料。使用 Python 3.10+ 从本 Skill 执行：
 
    ```bash
-   python3 /绝对路径/ai-docs-init/scripts/bootstrap.py --target /目标项目 --scan
-   python3 /绝对路径/ai-docs-init/scripts/bootstrap.py --target /目标项目 --mode auto --summary --plan-file /tmp/ai-docs-plan.json
+   python3 /Skill目录/scripts/bootstrap.py --target /目标项目 --scan
+   python3 /Skill目录/scripts/bootstrap.py --target /目标项目 --mode auto --summary --plan-file /tmp/ai-docs-plan.json
    ```
 
-   `--scan` 只盘点；省略 `--apply` 只生成增量计划。`--summary` 返回创建计数、更新路径、保留计数和完整冲突，避免大量资产哈希占满上下文；`--plan-file` 仍保存完整变更快照。按摘要定位需审阅的原文件与计划中的实际变更，计划不能报告为已安装。脚本不运行项目登记命令，也不自动完成历史文档语义迁移。
-3. 在用户已授权的范围内应用可兼容的增量变更，无需例行重新请求许可。
+   盘点不替代语义阅读。摘要列出计数、更新与冲突，完整计划保存在目标之外；按需审阅实际原文与变更。省略 `--apply` 只预览，不能报告为已安装。
+2. 在已授权范围内应用同一计划，无需例行重新请求许可：
 
    ```bash
-   python3 /绝对路径/ai-docs-init/scripts/bootstrap.py --target /目标项目 --apply --summary --plan-file /tmp/ai-docs-plan.json
+   python3 /Skill目录/scripts/bootstrap.py --target /目标项目 --apply --summary --plan-file /tmp/ai-docs-plan.json
    ```
 
-   应用保存计划前会检查目标哈希；目标已变化时重新盘点、生成并审阅计划，不绕过过期保护。不提供 `--plan-file` 时，`--apply` 当场生成并应用计划，适用于已明确的小范围工作。
-
-   用户已确认项目名称和概况时，可在生成计划时同时传入 `--overview-title "项目名称" --overview-summary "已确认概况"`，按需创建 draft 总纲。已有同主题文档先复用或迁移；不要另造空总纲。语义冲突先保留原文件，继续独立且兼容的工作；需要用户裁决时说明具体冲突与备选结果，不因冲突擅自覆盖。
-4. 按目标项目 `docs/_system/configuration-guide.md` 填写 `project-map.json` 和 `commands.json`：登记真实位置、真实命令、环境、副作用及证据。未知保持未知，不适用须有理由。检查文件存在不代表命令已执行；不猜测启动方式、核验日期、批准或预授权。只在实际核验后记录 `verified_at`。
-5. 接入协议与历史迁移分开交付。`adopt` 先让后续写入遵守新规则，再按用户明确的领域、任务或全集范围迁移旧文档。迁移前核验同主题对象，保留稳定 ID、正文、状态、历史、证据、附件和引用；具体做法见 [existing-project.md](references/existing-project.md)。
-6. 使用目标项目安装的工具检查最终状态：
+   目标变化后重新盘点并生成计划。保留入口原文、项目定制和历史事实；语义冲突先保留并继续兼容工作，需要裁决时说明具体冲突。用户确认项目名称概况后可在生成计划时同时传入 `--overview-title` 与 `--overview-summary`，仅创建 draft 总纲；已有同主题对象先复用。
+3. 按 `assets/templates/docs/_system/configuration-guide.md` 填写目标 `docs/.ai-docs.json`。它是唯一项目配置，按字段区分身份、位置、命令、就绪、本地覆盖和工具管理的 `installation`，初始化不拆分文件，不登记全部空位置或空命令。未知保持未知，命令未执行不填核验日期，不把结构通过当作业务验证。
+4. `adopt` 先接入后续写入，再按用户明确范围迁移历史。保留 ID、完整正文、状态、依据、附件和引用，最终一个对象只有一个可编辑正文来源；未迁移和未识别的范围准确报告。旧完整安装转换先保全配置和本地修改，流程见参考。
+5. 从本 Skill 的工具验证目标：
 
    ```bash
-   python3 /目标项目/docs/_tools/docctl.py --root /目标项目 check
-   python3 /目标项目/docs/_tools/docctl.py --root /目标项目 check --strict
+   python3 /Skill目录/assets/templates/docs/_tools/docctl.py --root /目标项目 check
+   python3 /Skill目录/assets/templates/docs/_tools/docctl.py --root /目标项目 check --strict
    ```
 
-   结合基线区分已有缺陷和本次引入的问题。若安装被冲突阻断或工具不兼容，不盲目运行受阻的检查，也不把未执行写为通过。保留可审查结果并报告缺口。
+   工具只处理目标业务文档、配置与按需派生物，不运行登记命令。对照基线报告安装、真实配置和严格就绪三个状态；初始化 strict 有真实缺口时保留要求，不降低门禁制造通过。工具、旧格式或资源不兼容时报告实际未执行或未验证范围。
 
-## 不变规则与交付
+## 不变规则
 
-- 分类是词典，未使用模板不实例化。1–2 个独立条目存于 `<base_path>.md`，第 3 个迁移为 `<base_path>/<ID>-<slug>.md`；已展开集合保持目录。标题数、修改次数和篇幅不触发展开。
-- 已有对象优先更新。展开须保留身份与事实，修复入链、相对出链、锚点和必要索引；最终只保留一个可编辑正文来源。
-- 不把模板或安装行为提升为有效规范、批准、上线或访问权限。`operating_mode` 保持 `bootstrap`，直到项目实际满足声明的维护条件。
-- `docs/_system/installation.json` 记录安装版本、托管文件或区块及基线哈希，用于重复运行跳过和升级保护本地修改；不维护业务条目数量。清单存在本身不能证明安装完整或兼容。
-- 分别报告：**系统安装**（无阻断的必需资产与入口）、**项目配置**（真实定位及命令）、**严格就绪**（实际 `check --strict` 结果）。新安装因缺少核心事实或核验而 strict 失败是正常缺口；保留要求，不能降低门禁来制造通过。结构通过也不证明业务验证、发布或生产验证完成。
-- 交付说明包含实际应用范围、冲突或未迁移范围、检查证据和下一步；已知历史问题或未验证旧格式未解决时，不宣称文档维护完整完成。
+- 逻辑分类固定，未使用模板不实例化。未展开集合 1–2 条在 `<base_path>.md`，第 3 条展开为 `<base_path>/<ID>-<slug>.md`；已展开不收拢。标题、篇幅、修改次数不计作条目。
+- 已有对象优先更新；迁移保全身份与事实，修复入链、出链、锚点及必要索引。模板、安装、草案与外部证据不授予批准或生产权限。
+- `installation` 记录入口托管区块的版本和基线，不登记业务条目数量，也不证明配置或业务就绪。升级保留用户字段，不伪造基线绕过本地修改保护。
+- `operating_mode` 保持 `bootstrap`，直到实际事实、验证和交接满足要求。完成声明包含实际范围、冲突、未迁移项、检查证据和下一步。
 
 ## 模板维护
 
-来源仓库的 `templates/` 是模板唯一源码；Skill 内 `assets/templates/` 是打包生成的可携带资产，不手工维护第二份协议。维护模板时，在来源仓库运行：
+来源仓库 `templates/` 是唯一模板源码，`assets/templates/` 是生成资源，不手工维护第二份协议。改动后从来源仓库根执行：
 
 ```bash
 python3 skills/ai-docs-init/scripts/build_assets.py
 python3 skills/ai-docs-init/scripts/build_assets.py --check
 ```
 
-打包后可复制整个 Skill 独立使用，初始化不依赖来源仓库。使用安装后的项目协议处理日常写入，升级使用本 Skill。
+日常写入从项目入口按需读取这里的规则和模板；项目配置与真实业务内容始终属于目标项目。

@@ -1,8 +1,28 @@
-# 定位与命令配置说明
+# 项目配置：docs/.ai-docs.json
 
-这些 JSON 文件是本项目约定，不会被所有 Agent 客户端自动识别。根入口要求执行者显式查阅；内置工具只做结构检查和路由展示，不执行登记命令。
+项目只维护这一份 JSON 配置，不拆成位置、命令、分类与安装清单等多个文件。它是项目约定，不会被所有 Agent 客户端自动识别；根入口要求执行者显式查阅。通用协议、工具、分类默认值和模板从匹配版本的 Skill 读取，工具不执行登记命令。
 
-## project-map.json
+## 字段与维护边界
+
+| 字段 | 职责 |
+|---|---|
+| schema_version | 本配置文件的格式版本，当前为 1 |
+| system | Skill 资源包名称与固定版本，不存某台机器绝对路径 |
+| project | 真实项目名称、责任主体及 bootstrap / maintenance 状态 |
+| work_tracking | 本地任务状态来源或外部工作项定位 |
+| locations | 按已知内容登记代码、契约、数据、测试及外部来源 |
+| commands | 按已知内容登记真实运行与验证命令 |
+| readiness | 可选的项目就绪约定；省略时使用 Skill 的默认要求 |
+| overrides | 可选的分类和路由定制；省略时使用 Skill 默认值 |
+| installation | 工具管理的安装状态与四个入口托管区块基线 |
+
+新项目的 locations 和 commands 是空数组，不复制所有空登记项。只在实际发现或确认内容后添加对应记录；必需内容尚未登记时，严格检查保留缺口。未知不以猜测填充。
+
+项目身份、位置、命令和覆盖由项目维护；installation 由安装器维护，两者在一个文件中以字段区分。升级保留项目字段与未知扩展字段，不把用户编辑误当作整个系统文件的冲突。不要人工伪造安装基线来覆盖本地入口修改。
+
+当前无需拆分。未来只有真实出现独立维护责任或难以审阅的配置规模时，才经明确格式迁移考虑拆分；初始化不预建分文件或空目录。
+
+## project、work_tracking 与 locations
 
 `project.name` 和 `project.owner` 填实际项目与责任主体；`operating_mode` 初始为 `bootstrap`。核心事实、命令、权限及交接演练经确认后才改为 `maintenance`；这个标记不增加任何访问权限。
 
@@ -25,7 +45,7 @@
 
 `readiness` 声明核心文档、必需位置和最低验证命令。可以根据项目性质确认调整，但不能为了绕过失败擅自降低门禁。
 
-## commands.json
+## commands
 
 每条命令用稳定 ID 关联说明，具体可执行项只在这里登记，不到处复制命令文本。
 
@@ -44,7 +64,9 @@
 
 最小 `verify` 应能检查实际项目的关键完成条件，不能仅因文档工具 check 通过就把项目业务验证标为完成。
 
-## routes.json 与 collections.json
+## 默认资源与 overrides
+
+默认 routes.json 和 collections.json 保存在 Skill 资源根的 `docs/_system/`，项目不复制。项目确需定制时，在 `overrides.collections` 或 `overrides.routes` 保存对应完整 JSON 配置；未定制部分仍读取 Skill 默认值，不能维护第二份本地计数或状态。
 
 `collections.json` 采用 schema_version 2。`defaults` 声明 `compact_max_items: 2`、禁止空业务文件和空集合目录、`auto_collapse: false`；`page_size` 默认 40。各集合登记以下内容，不手工保存 `item_count`：
 
@@ -55,10 +77,10 @@
 | prefix | ID 前缀；全库检查 ID 唯一性 |
 | unit | 一个可独立命名、检索、维护对象的语义边界，不按标题和编辑次数计数 |
 | minimum_content | 该类型的最低充分内容，不能用空占位符代替事实 |
-| template | 集中模板源 `docs/_templates/<key>.md`，不是业务实例 |
+| template | Skill 资源根中的 `docs/_templates/<key>.md`，不是目标项目路径或业务实例 |
 | title / summary / authority | 分类职责、检索摘要与信息角色 |
 
-routes 中的 `must_read`、`read_when` 和 `write_back` 使用 `{"collection":"feature"}` 引用集合，由工具解析现有紧凑文件或展开目录；尚无内容时显示按需位置，不为路由预建空壳。按需单篇文档使用 `optional_path`；固定维护规则可直接引用稳定实际路径。先定位具体相关条目，不读取整个集合。`read_when` 的条件资料在任务满足条件时仍需核验，位置尚不存在时记录缺口，不视为要求自动失效。
+routes 中的 `must_read`、`read_when` 和 `write_back` 使用 `{"collection":"feature"}` 引用目标集合，由工具解析现有紧凑文件或展开目录；尚无内容时显示按需位置，不为路由预建空壳。按需单篇文档使用 `optional_path`。`docs/_system/` 的固定规则引用由工具解析到匹配 Skill 资源，旧位置和命令配置引用解析到本项目的 `docs/.ai-docs.json`，不要求目标拥有系统目录。先定位具体相关条目，不读取整个集合。条件资料在任务满足条件时仍需核验，缺失时记录缺口。
 
 物理路径转换不改变类别、最低内容、状态语义或授权要求。修改配置须同步适配工具、路由和示例，不能只用新 JSON 覆盖旧工具并期待兼容；该 schema 是本项目格式，不是客户端自动发现规范。
 

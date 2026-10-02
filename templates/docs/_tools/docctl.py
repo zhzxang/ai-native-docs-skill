@@ -8,7 +8,10 @@ Front matter and compact `yaml doc-meta` blocks use key: JSON scalar.
 from __future__ import annotations
 
 import argparse
+from contextvars import ContextVar
+from functools import wraps
 import hashlib
+import importlib.util
 import json
 import os
 import posixpath
@@ -21,6 +24,14 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import unquote, urlsplit
+
+_runtime_spec = importlib.util.spec_from_file_location(
+    "_ai_docs_runtime", Path(__file__).with_name("ai_docs_runtime.py"))
+if _runtime_spec is None or _runtime_spec.loader is None:
+    raise ImportError("无法加载 Skill 文档资源定位器 ai_docs_runtime.py")
+ai_docs_runtime = importlib.util.module_from_spec(_runtime_spec)
+_runtime_spec.loader.exec_module(ai_docs_runtime)
+_RESOURCES: ContextVar[Path | None] = ContextVar("ai_docs_resources", default=None)
 
 STATUSES = {"template", "draft", "active", "deprecated", "archived"}
 AUTHORITIES = {"normative", "descriptive", "evidence", "procedure"}
@@ -44,6 +55,38 @@ class DocError(ValueError):
     """An actionable configuration or document error."""
 
 
+def resource_scope(function):
+    """Keep explicit resource selection local to a single library/CLI operation."""
+    @wraps(function)
+    def wrapped(*args, resources: Path | None = None, **kwargs):
+        token = _RESOURCES.set(Path(resources) if resources is not None else _RESOURCES.get())
+        try:
+            return function(*args, **kwargs)
+        finally:
+            _RESOURCES.reset(token)
+    return wrapped
+
+
+def runtime(root: Path):
+    try:
+        return ai_docs_runtime.Runtime(root, _RESOURCES.get())
+    except ai_docs_runtime.RuntimeError as exc:
+        raise DocError(str(exc)) from exc
+
+
+def template_path(root: Path, relative: str) -> Path:
+    try:
+        return runtime(root).template(relative)
+    except ai_docs_runtime.RuntimeError as exc:
+        raise DocError(str(exc)) from exc
+
+
+def require_project_write_target(root: Path) -> None:
+    resources = ai_docs_runtime.resource_root(_RESOURCES.get())
+    if root.resolve().is_relative_to(resources):
+        raise DocError("拒绝写入共享 Skill 资源目录；请用 --root 指定资源包之外的项目根目录")
+
+
 def safe_path(root: Path, relative: str) -> Path:
     """Resolve a repository-relative path and reject traversal / symlink escape."""
     if not isinstance(relative, str) or not relative.strip():
@@ -58,11 +101,10 @@ def safe_path(root: Path, relative: str) -> Path:
 
 
 def load_json(root: Path, relative: str) -> Any:
-    path = safe_path(root, relative)
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise DocError(f"无法读取 JSON {relative}: {exc}") from exc
+        return runtime(root).load(relative)
+    except ai_docs_runtime.RuntimeError as exc:
+        raise DocError(str(exc)) from exc
 
 
 def parse_frontmatter(text: str, label: str = "<text>") -> dict[str, Any] | None:
@@ -308,7 +350,8 @@ def date_is_valid(value: Any) -> bool:
         return False
 
 
-def registry(root: Path) -> dict[str, Any]:
+@resource_scope
+def registry(root: Path, *, resources: Path | None = None) -> dict[str, Any]:
     data = load_json(root, "docs/_system/collections.json")
     if not isinstance(data, dict) or not isinstance(data.get("collections"), list):
         raise DocError("collections.json 需要 collections 数组")
@@ -346,9 +389,15 @@ def collection_state(root: Path, item: dict[str, Any]) -> dict[str, Any]:
             "planned_path": base + ".md"}
 
 
-def resolve_reference(root: Path, ref: Any, choices: dict[str, Any]) -> tuple[str | None, dict[str, Any] | None]:
+def resolve_reference(root: Path, ref: Any, choices: dict[str, Any], *, writing: bool = False) -> tuple[str | None, dict[str, Any] | None]:
     if isinstance(ref, str):
-        path = entry_point_path(root, safe_path(root, ref))
+        context = runtime(root)
+        try:
+            path = entry_point_path(root, context.write_reference(ref) if writing else context.reference(ref))
+        except ai_docs_runtime.RuntimeError as exc:
+            raise DocError(str(exc)) from exc
+        if not path.is_relative_to(root.resolve()):
+            return path.as_posix(), {"resource_path": ref, "provider": "skill"}
         return path.relative_to(root).as_posix(), None
     if isinstance(ref, dict) and set(ref) == {"collection"}:
         key = ref["collection"]
@@ -468,7 +517,8 @@ def empty_business_errors(root: Path) -> list[str]:
     return errors
 
 
-def validate(root: Path, strict: bool = False) -> dict[str, Any]:
+@resource_scope
+def validate(root: Path, strict: bool = False, *, resources: Path | None = None) -> dict[str, Any]:
     root = root.resolve()
     errors: list[str] = []
     warnings: list[str] = []
@@ -562,6 +612,11 @@ def validate(root: Path, strict: bool = False) -> dict[str, Any]:
                     if not meta.get("approved_by") or not meta.get("approval_ref"):
                         errors.append(f"{label}: 生效规范/程序缺少批准依据")
     try:
+        context = runtime(root)
+        if context.lightweight:
+            for entry in ("docs/AGENTS.md", "docs/README.md"):
+                if not safe_path(root, entry).is_file():
+                    errors.append(f"缺少入口：{entry}")
         reg = registry(root)
         seen_keys: set[str] = set()
         seen_bases: set[str] = set()
@@ -573,7 +628,7 @@ def validate(root: Path, strict: bool = False) -> dict[str, Any]:
                 continue
             seen_keys.add(key)
             for field in (("directory", "template") if reg["schema_version"] == 1 else ("template",)):
-                dest = safe_path(root, item.get(field, ""))
+                dest = template_path(root, item.get(field, "")) if field == "template" else safe_path(root, item.get(field, ""))
                 if not dest.exists():
                     errors.append(f"collections.json: {key}.{field} 不存在")
             if reg["schema_version"] == 2:
@@ -599,12 +654,12 @@ def validate(root: Path, strict: bool = False) -> dict[str, Any]:
             if item["id"] in seen_routes:
                 errors.append(f"重复路由 ID: {item['id']}")
             seen_routes.add(item["id"])
-            refs = list(item["must_read"]) + list(item["write_back"])
+            refs = [(ref, False) for ref in item["must_read"]] + [(ref, True) for ref in item["write_back"]]
             for rule in item.get("read_when", []):
-                refs.extend(rule["paths"])
-            for ref in refs:
-                resolved, _ = resolve_reference(root, ref, choices)
-                if resolved is not None and not safe_path(root, resolved).exists():
+                refs.extend((ref, False) for ref in rule["paths"])
+            for ref, writing in refs:
+                resolved, _ = resolve_reference(root, ref, choices, writing=writing)
+                if resolved is not None and not (Path(resolved) if Path(resolved).is_absolute() else safe_path(root, resolved)).exists():
                     errors.append(f"路由 {item['id']}: 路径不存在 {resolved}")
         if reg["schema_version"] == 2:
             errors.extend(empty_business_errors(root))
@@ -694,11 +749,14 @@ def validate(root: Path, strict: bool = False) -> dict[str, Any]:
             "limits": "不执行项目命令，不联网；检查本协议平面元数据及普通 Markdown 本地引用，不证明条目语义边界、批准真实性或外部权限。"}
 
 
+@resource_scope
 def make_new(root: Path, key: str, doc_id: str, slug: str, title: str,
-             kind: str | None = None) -> Path:
+             kind: str | None = None, *, resources: Path | None = None) -> Path:
     """Serialize lookup, counting, creation, migration and generated-index updates."""
     root = root.resolve()
-    lock = safe_path(root, "docs/_system/.docctl-new.lock")
+    require_project_write_target(root)
+    context = runtime(root)
+    lock = safe_path(root, "docs/.docctl.lock" if context.lightweight else "docs/_system/.docctl-new.lock")
     try:
         descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     except FileExistsError as exc:
@@ -739,7 +797,7 @@ def _make_new(root: Path, key: str, doc_id: str, slug: str, title: str,
     structural = collection_errors(root, item)
     if structural:
         raise DocError("无法新增到结构异常的集合：" + "；".join(structural))
-    source = safe_path(root, item["template"]).read_text(encoding="utf-8")
+    source = template_path(root, item["template"]).read_text(encoding="utf-8")
     template_meta = parse_frontmatter(source, item["template"])
     if not template_meta or template_meta.get("type") != key or template_meta.get("status") != "template":
         raise DocError("所选模板的 type/status 与集合登记不一致")
@@ -1039,10 +1097,12 @@ def expand_collection(root: Path, item: dict[str, Any], entries: list[dict[str, 
     return targets[-1]
 
 
+@resource_scope
 def find_records(root: Path, typ: str | None = None, status: str | None = None,
                  state: str | None = None, kind: str | None = None,
                  query: str | None = None, limit: int = 20,
-                 include_archive: bool = False) -> dict[str, Any]:
+                 include_archive: bool = False, *, resources: Path | None = None) -> dict[str, Any]:
+    runtime(root)  # Enforce the project version even though finding needs no templates.
     if limit < 1 or limit > 1000:
         raise DocError("limit 必须在 1 到 1000 之间")
     matches = []
@@ -1069,8 +1129,10 @@ def table_text(value: Any) -> str:
     return str(value if value is not None else "—").replace("|", "\\|").replace("\n", " ")
 
 
-def generate_indexes(root: Path) -> dict[str, Any]:
+@resource_scope
+def generate_indexes(root: Path, *, resources: Path | None = None) -> dict[str, Any]:
     root = root.resolve()
+    require_project_write_target(root)
     reg = registry(root)
     page_size = reg["page_size"]
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -1138,7 +1200,8 @@ def generate_indexes(root: Path) -> dict[str, Any]:
             "page_size": page_size, "note": "只重建 _generated/indexes 与 _generated/catalog；不修改源记录。"}
 
 
-def show_routes(root: Path, query: str) -> list[dict[str, Any]]:
+@resource_scope
+def show_routes(root: Path, query: str, *, resources: Path | None = None) -> list[dict[str, Any]]:
     root = root.resolve()
     routes = load_json(root, "docs/_system/routes.json")["routes"]
     exact = [r for r in routes if r["id"].casefold() == query.casefold()]
@@ -1151,23 +1214,27 @@ def show_routes(root: Path, query: str) -> list[dict[str, Any]]:
     for route in matches:
         states = []
         gaps = []
-        def resolve(refs):
+        def resolve(refs, *, writing=False):
             paths = []
             for ref in refs:
-                path, state = resolve_reference(root, ref, choices)
+                path, state = resolve_reference(root, ref, choices, writing=writing)
                 if state is not None:
                     if "collection" in state and state not in states:
                         states.append(state)
                     if path is None and state not in gaps:
                         gaps.append(state)
-                if path is not None:
+                if path is not None and path not in paths:
                     paths.append(path)
             return paths
         output = {**route, "must_read": resolve(route["must_read"]),
-                  "write_back": resolve(route["write_back"])}
+                  "write_back": resolve(route["write_back"], writing=True)}
         output["read_when"] = [{**rule, "paths": resolve(rule["paths"])} for rule in route.get("read_when", [])]
         output["collection_states"] = states
         output["gaps"] = gaps
+        if runtime(root).lightweight and any(isinstance(ref, str) and ref.startswith("docs/_system/")
+                                            for ref in route["write_back"]):
+            output["write_note"] = ("项目配置写入 docs/.ai-docs.json，集合和路由定制使用 overrides；"
+                                    "项目规则写入 docs/AGENTS.md 的托管区块之外。共享 Skill 资源只读。")
         result.append(output)
     return result
 
@@ -1176,6 +1243,8 @@ def cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2],
                         help="仓库根目录；默认由本脚本位置推导")
+    parser.add_argument("--resources", type=Path,
+                        help="外部 Skill 模板资源根目录；默认使用本脚本所在的资源包")
     subs = parser.add_subparsers(dest="action", required=True)
     check = subs.add_parser("check", help="检查结构；不执行项目命令")
     check.add_argument("--strict", action="store_true")
@@ -1200,21 +1269,21 @@ def cli(argv: list[str] | None = None) -> int:
     try:
         root = args.root.resolve()
         if args.action == "check":
-            result = validate(root, args.strict)
+            result = validate(root, args.strict, resources=args.resources)
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0 if result["ok"] else 1
         if args.action == "new":
-            path = make_new(root, args.type, args.id, args.slug, args.title, args.kind)
+            path = make_new(root, args.type, args.id, args.slug, args.title, args.kind, resources=args.resources)
             print(json.dumps({"created": path.relative_to(root).as_posix(), "anchor": args.id.lower(), "status": "draft",
                               "note": "仍需填写、核验和相应批准；不代表已实现或获准执行。"}, ensure_ascii=False, indent=2))
         elif args.action == "find":
             print(json.dumps(find_records(root, args.type, args.status, args.state,
-                                          args.kind, args.query, args.limit, args.include_archive),
+                                          args.kind, args.query, args.limit, args.include_archive, resources=args.resources),
                              ensure_ascii=False, indent=2))
         elif args.action == "index":
-            print(json.dumps(generate_indexes(root), ensure_ascii=False, indent=2))
+            print(json.dumps(generate_indexes(root, resources=args.resources), ensure_ascii=False, indent=2))
         elif args.action == "route":
-            print(json.dumps(show_routes(root, args.query), ensure_ascii=False, indent=2))
+            print(json.dumps(show_routes(root, args.query, resources=args.resources), ensure_ascii=False, indent=2))
         return 0
     except (DocError, OSError, UnicodeError, KeyError, TypeError, ValueError) as exc:
         print(f"错误：{exc}", file=sys.stderr)

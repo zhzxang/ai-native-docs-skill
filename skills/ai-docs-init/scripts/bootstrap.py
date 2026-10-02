@@ -27,14 +27,15 @@ def summarize(output: dict, plan_file: Path | None) -> dict:
     result = {key: value for key, value in output.items() if key not in {"actions", "preserved"}}
     actions = output.get("actions", [])
     result["action_counts"] = {operation: sum(item["operation"] == operation for item in actions)
-                               for operation in ("create", "update")}
-    groups = {}
-    for item in actions:
-        if item["operation"] == "create":
-            parts = Path(item["path"]).parts
-            group = "/".join(parts[:2]) if len(parts) > 2 else item["path"]
-            groups[group] = groups.get(group, 0) + 1
-    result["created_groups"] = groups
+                               for operation in ("create", "update", "delete")}
+    for operation, label in (("create", "created_groups"), ("delete", "deleted_groups")):
+        groups = {}
+        for item in actions:
+            if item["operation"] == operation:
+                parts = Path(item["path"]).parts
+                group = "/".join(parts[:2]) if len(parts) > 2 else item["path"]
+                groups[group] = groups.get(group, 0) + 1
+        result[label] = groups
     result["updated_paths"] = [item["path"] for item in actions if item["operation"] == "update"]
     result["preserved_count"] = len(output.get("preserved", []))
     if plan_file:
@@ -92,11 +93,11 @@ def cli(argv: list[str] | None = None) -> int:
         result = installer.bootstrap(source, target, mode=args.mode,
                                      dry_run=not args.apply, plan=plan)
         output = public_plan(result)
-        if args.apply and result.get("applied") and (target / "docs/_system/collections.json").is_file():
+        if args.apply and result.get("applied") and (target / "docs/.ai-docs.json").is_file():
             checker = load_module(source / "docs/_tools/docctl.py", "ai_docs_skill_checker")
             try:
-                structure = checker.validate(target)
-                strict = checker.validate(target, strict=True)
+                structure = checker.validate(target, resources=source)
+                strict = checker.validate(target, strict=True, resources=source)
                 output["validation"] = {"structure": structure, "strict": strict}
                 stages = output.setdefault("stages", {})
                 stages["structure_valid"] = structure["ok"]
