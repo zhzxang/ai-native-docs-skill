@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "id": "empty-project",
+  "description": "无代码、无历史文档的本地空项目，用于最小初始化、预览和重复执行场景。",
+  "source": "fixtures/empty-project"
+}

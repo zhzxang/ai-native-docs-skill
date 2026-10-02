@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "id": "vite-code-facts",
+  "title": "阅读 Todo 源码并补充入口、领域和持久化事实",
+  "project": "vite-todo",
+  "tags": [
+    "vite",
+    "node",
+    "sync",
+    "facts"
+  ],
+  "engines": [
+    "codex"
+  ],
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "setup-sync.json"
+    }
+  ],
+  "prompt": "项目已经初始化并生成了来源草案。请阅读 Todo 的真实源码，按 ai-docs-sync 和 ai-docs-check 规则补充已有架构总览与开发指南。需要解释 HTML 与 React 入口、UI 调用的领域函数和存储函数、Todo 数据字段、持久化介质与实际键名、读取和保存发生的时机、筛选是否写入存储，以及后端和网络依赖的实际边界。开发指南根据 package.json 列出准确的启动、构建和测试命令。保留文档 ID，不另建同类文档；只修改这两份已有文档，源码、清单、README 和配置保持原样。不运行项目命令，核验与批准保持未知；完成后校验文档结构。",
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "patterns": [
+        "src/**",
+        "public/**",
+        "tests/**",
+        "*.json",
+        "*.html",
+        ".gitignore"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null
+      }
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/development/quickstart.md",
+      "fields": {
+        "id": "DEV-QUICKSTART",
+        "type": "development-guide",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "approved_by": null,
+        "approval_ref": null
+      }
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/architecture/overview.md",
+      "texts": [
+        "index.html",
+        "src/main.tsx",
+        "src/App.tsx",
+        "src/lib/todos.ts",
+        "src/lib/todo-storage.ts",
+        "localStorage",
+        "vite-todo.items.v1",
+        "loadTodos",
+        "saveTodos",
+        "useState",
+        "useEffect",
+        "completed"
+      ]
+    },
+    {
+      "kind": "regex",
+      "path": "docs/engineering/architecture/overview.md",
+      "pattern": "(不|无|没有)[^\n。]{0,30}(后端|服务端|backend)"
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/development/quickstart.md",
+      "texts": [
+        "npm run dev",
+        "npm run build",
+        "npm test",
+        "tsc -b",
+        "vite"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "id": "empty-repeat-init",
+  "title": "已初始化空项目重复执行保持字节不变",
+  "project": "empty-project",
+  "tags": [
+    "init",
+    "idempotence"
+  ],
+  "prompt": "这个空项目已经完成初始化，请使用 ai-docs-init 再次检查并应用初始化计划，计划放在 {plans}。我授权这次初始化；已有入口和配置没有新事实需要修改时应保持原内容。",
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    }
+  ],
+  "steps": [
+    {
+      "action": "init",
+      "plan": "repeat-init.json"
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json",
+        ".gitkeep"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": []
+    }
+  ]
+}

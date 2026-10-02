@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "id": "vite-init",
+  "title": "Vite Todo 仅接入最小文档系统",
+  "project": "vite-todo",
+  "tags": [
+    "vite",
+    "node",
+    "init",
+    "smoke"
+  ],
+  "prompt": "请使用 ai-docs-init 为当前 Vite Todo 项目初始化最小文档系统。我授权先生成并审阅计划，再应用同一计划；计划保存在 {plans}。保留原 README 的项目说明。本次只初始化，不同步架构或开发指南，不执行 npm 命令。",
+  "steps": [
+    {
+      "action": "init",
+      "plan": "init.json"
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "patterns": [
+        "src/**",
+        "public/**",
+        "tests/**",
+        "*.json",
+        "*.html",
+        ".gitignore"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/engineering"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "README.md",
+      "texts": [
+        "vite-todo.items.v1",
+        "npm run build",
+        "src/lib/todos.ts"
+      ]
+    }
+  ]
+}

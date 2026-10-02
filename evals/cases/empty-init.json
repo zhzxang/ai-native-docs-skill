@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "id": "empty-init",
+  "title": "空项目只初始化五个最小文件",
+  "project": "empty-project",
+  "tags": [
+    "init",
+    "empty",
+    "minimal"
+  ],
+  "prompt": "请使用 ai-docs-init 为 {project} 完成最小 AI 文档系统初始化。我授权预览并应用同一计划，计划放在 {plans}。这里只需要五个最小入口和配置，项目没有代码或已知业务事实。",
+  "steps": [
+    {
+      "action": "init",
+      "plan": "init.json"
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        ".gitkeep"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 0
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 0
+    }
+  ]
+}

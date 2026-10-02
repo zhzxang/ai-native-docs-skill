@@ -15,7 +15,12 @@ def load_module(path: Path, name: str):
         raise ValueError(f"无法载入工具：{path}")
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
-    spec.loader.exec_module(module)
+    previous = sys.dont_write_bytecode
+    try:
+        sys.dont_write_bytecode = True
+        spec.loader.exec_module(module)
+    finally:
+        sys.dont_write_bytecode = previous
     return module
 
 
@@ -47,7 +52,7 @@ def cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", type=Path, required=True)
     parser.add_argument("--source", type=Path,
-                        default=Path(__file__).resolve().parents[1] / "assets/templates")
+                        default=Path(__file__).resolve().parents[2] / "ai-docs-check/assets/templates")
     parser.add_argument("--mode", choices=("auto", "init", "adopt", "upgrade"), default="auto")
     action = parser.add_mutually_exclusive_group()
     action.add_argument("--apply", action="store_true")
@@ -61,12 +66,17 @@ def cli(argv: list[str] | None = None) -> int:
                         help="输出计数、更新路径和完整冲突；完整变更仍保存在 --plan-file 中")
     args = parser.parse_args(argv)
     try:
+        if args.overview_title is not None or args.overview_summary is not None:
+            raise ValueError("最小初始化不生成业务文档；请使用独立同步入口 "
+                             "skills/ai-docs-sync/scripts/sync.py --target <项目> "
+                             "--overview-title <标题> --overview-summary <摘要> --plan-file <项目外计划> "
+                             "预览，再用 --apply --plan-file <同一计划> 执行")
         source = args.source.resolve()
         # Preserve the supplied path so the installer can reject symlink ancestors.
         target = args.target.absolute()
         installer_path = source / "docs/_tools/init_docs.py"
         if not installer_path.is_file():
-            raise ValueError("Skill 缺少打包模板；维护者先运行 scripts/build_assets.py")
+            raise ValueError("ai-docs-check Skill 缺少公共资源；请恢复完整 Skill，或用 --source 指定完整资源目录")
         installer = load_module(installer_path, "ai_docs_skill_installer")
         if args.scan:
             if args.plan_file or args.overview_title or args.overview_summary:

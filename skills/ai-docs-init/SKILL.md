@@ -1,60 +1,38 @@
 ---
 name: ai-docs-init
-description: "为新项目初始化、为已有项目接入或迁移、升级轻量 AI 文档系统。建立或更新这套文档体系时使用；日常文档写入由项目入口引导按需读取 Skill 资源。"
+description: "为新项目或已有项目初始化最小 AI 文档系统，或升级系统入口与配置。历史迁移、代码文档同步和类型校验分别使用独立 Skill。"
 ---
 
-# 轻量 AI 文档系统初始化
+# 最小 AI 文档系统初始化
 
-初始化只合并四个 README/AGENTS 入口并保存 `docs/.ai-docs.json`，确认内容后才创建业务文档。通用规则、工具和模板留在本 Skill 的 `assets/templates/`，不在目标项目创建 `_system/`、`_tools/` 或 `_templates/`，没有完整安装选项。
+新旧项目默认执行同一最小初始化：合并四个 README/AGENTS 入口，保存 `docs/.ai-docs.json`。初始化不生成业务正文、分类树或索引。通用协议、模板和校验工具由同版本 [ai-docs-check](../ai-docs-check/SKILL.md) 的 `assets/templates/` 提供，不复制到目标项目。
 
-## 模式与资源
+## 执行初始化
 
-`auto` 根据盘点选择 `init`（新项目）、`adopt`（已有项目接入）或 `upgrade`（已安装项目升级）；三种模式都是轻量布局。老项目、历史迁移、旧完整安装或本地冲突先读 [existing-project.md](references/existing-project.md)。模式名称不授予覆盖原内容的权限。
-
-通过本 Skill 的实际位置定位脚本和资源，支持复制整个目录后独立使用。`docs/.ai-docs.json` 的 `system.version` 固定资源版本；找不到匹配资源时报告缺口，停止依赖它的写入或检查，不猜测格式或复制资源作为回退。入口必须显式引导日常写入读取 Skill，不依赖自动触发，不把某台机器绝对路径写入项目。保存在项目 `skills/` 中不代表已全局安装。
-
-## 执行
-
-1. 确认目标根，读取适用约定、工作区差异和已有资料。使用 Python 3.10+ 从本 Skill 执行：
-
-   ```bash
-   python3 /Skill目录/scripts/bootstrap.py --target /目标项目 --scan
-   python3 /Skill目录/scripts/bootstrap.py --target /目标项目 --mode auto --summary --plan-file /tmp/ai-docs-plan.json
-   ```
-
-   盘点不替代语义阅读。摘要列出计数、更新与冲突，完整计划保存在目标之外；按需审阅实际原文与变更。省略 `--apply` 只预览，不能报告为已安装。
-2. 在已授权范围内应用同一计划，无需例行重新请求许可：
-
-   ```bash
-   python3 /Skill目录/scripts/bootstrap.py --target /目标项目 --apply --summary --plan-file /tmp/ai-docs-plan.json
-   ```
-
-   目标变化后重新盘点并生成计划。保留入口原文、项目定制和历史事实；语义冲突先保留并继续兼容工作，需要裁决时说明具体冲突。用户确认项目名称概况后可在生成计划时同时传入 `--overview-title` 与 `--overview-summary`，仅创建 draft 总纲；已有同主题对象先复用。
-3. 按 `assets/templates/docs/_system/configuration-guide.md` 填写目标 `docs/.ai-docs.json`。它是唯一项目配置，按字段区分身份、位置、命令、就绪、本地覆盖和工具管理的 `installation`，初始化不拆分文件，不登记全部空位置或空命令。未知保持未知，命令未执行不填核验日期，不把结构通过当作业务验证。
-4. `adopt` 先接入后续写入，再按用户明确范围迁移历史。保留 ID、完整正文、状态、依据、附件和引用，最终一个对象只有一个可编辑正文来源；未迁移和未识别的范围准确报告。旧完整安装转换先保全配置和本地修改，流程见参考。
-5. 从本 Skill 的工具验证目标：
-
-   ```bash
-   python3 /Skill目录/assets/templates/docs/_tools/docctl.py --root /目标项目 check
-   python3 /Skill目录/assets/templates/docs/_tools/docctl.py --root /目标项目 check --strict
-   ```
-
-   工具只处理目标业务文档、配置与按需派生物，不运行登记命令。对照基线报告安装、真实配置和严格就绪三个状态；初始化 strict 有真实缺口时保留要求，不降低门禁制造通过。工具、旧格式或资源不兼容时报告实际未执行或未验证范围。
-
-## 不变规则
-
-- 逻辑分类固定，未使用模板不实例化。未展开集合 1–2 条在 `<base_path>.md`，第 3 条展开为 `<base_path>/<ID>-<slug>.md`；已展开不收拢。标题、篇幅、修改次数不计作条目。
-- 已有对象优先更新；迁移保全身份与事实，修复入链、出链、锚点及必要索引。模板、安装、草案与外部证据不授予批准或生产权限。
-- `installation` 记录入口托管区块的版本和基线，不登记业务条目数量，也不证明配置或业务就绪。升级保留用户字段，不伪造基线绕过本地修改保护。
-- `operating_mode` 保持 `bootstrap`，直到实际事实、验证和交接满足要求。完成声明包含实际范围、冲突、未迁移项、检查证据和下一步。
-
-## 模板维护
-
-来源仓库 `templates/` 是唯一模板源码，`assets/templates/` 是生成资源，不手工维护第二份协议。改动后从来源仓库根执行：
+读取目标约定和工作区差异，然后从本 Skill 的实际位置执行 Python 3.10+ 脚本：
 
 ```bash
-python3 skills/ai-docs-init/scripts/build_assets.py
-python3 skills/ai-docs-init/scripts/build_assets.py --check
+python3 /ai-docs-init/scripts/bootstrap.py --target /项目 --scan
+python3 /ai-docs-init/scripts/bootstrap.py --target /项目 --summary --plan-file /tmp/init-plan.json
+python3 /ai-docs-init/scripts/bootstrap.py --target /项目 --apply --summary --plan-file /tmp/init-plan.json
 ```
 
-日常写入从项目入口按需读取这里的规则和模板；项目配置与真实业务内容始终属于目标项目。
+省略 `--apply` 只预览。在用户已授权的初始化范围内应用同一计划，不例行再次请求许可。计划保存在目标之外；目标变化需重新生成计划。`init`、`adopt` 是兼容模式和来源提示，两者均安全合并最小入口；`upgrade` 仍要求已安装基线。安装记录与项目配置保留本地扩展字段，冲突不覆盖。旧完整安装转换或入口语义冲突时按需读 [existing-project.md](references/existing-project.md)。
+
+脚本负责盘点、托管区块合并、配置转换、哈希复验、锁与失败回滚；AI 处理原约定与新规则的语义冲突。完成五个最小文件的安全合并即完成安装。结构、真实配置与 strict 就绪分别报告，strict 尚有业务缺口不影响已完成的最小安装。
+
+## 初始化后的独立路由
+
+先完成最小初始化，再读取脚本的 `follow_up`：
+
+- `ask_user_migration`：说明检测到的历史文档范围，询问是否迁移及范围。已明确授权迁移时直接使用 [ai-docs-migrate](../ai-docs-migrate/SKILL.md)，没有授权时保留原位置。
+- `sync_minimum_docs`：已有代码但无业务文档，优先使用 [ai-docs-sync](../ai-docs-sync/SKILL.md) 同步代码定位和开发入口草案。用户只要求最小初始化时报告可用后续动作。
+- `null`：没有需接入的历史文档或代码；不制造业务文档。
+
+README 中的项目说明可作为后续阅读依据，导航、安装资源和模板不算业务文档。盘点结果不能证明分类或业务事实。已有标准业务文档按原对象维护，不重复迁移。
+
+项目总纲属于独立同步或写入；初始化不接受 `--overview-title/--overview-summary`。身份、位置、命令和核验字段按 ai-docs-check 的 `configuration-guide.md` 填写，未知保持未知，命令未执行不填写核验日期。
+
+## 公共资源与版本
+
+默认从相邻 `ai-docs-check/assets/templates` 定位公共资源；不同安装位置用 `--source /资源根`。分发时携带所需 Skill 和 ai-docs-check，或显式提供匹配版本资源。目标 `system.version` 固定协议版本；资源缺失或不匹配时报错，不将机器绝对路径写入项目，不复制系统目录作为回退。保存到仓库 `skills/` 不代表全局安装。

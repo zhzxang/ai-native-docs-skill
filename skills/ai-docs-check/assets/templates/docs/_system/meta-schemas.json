@@ -1,0 +1,1718 @@
+{
+  "schema_version": 1,
+  "description": "文档平面 JSON 标量元数据规则；未知事实可用 null，正文充分性由 AI/人工判断。required 是键存在要求，nullable 是字段值要求。保留未知扩展字段；与别的类型专属字段混用仍属错误。",
+  "common": {
+    "required": [
+      "id",
+      "type",
+      "status",
+      "summary",
+      "owner",
+      "applies_to",
+      "verified_at",
+      "verification_ref",
+      "authority"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$"
+      },
+      "slug": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "type": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "template",
+          "draft",
+          "active",
+          "deprecated",
+          "archived"
+        ]
+      },
+      "summary": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1
+      },
+      "owner": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1
+      },
+      "applies_to": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1
+      },
+      "verified_at": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date-or-date-time"
+      },
+      "verification_ref": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1
+      },
+      "authority": {
+        "type": "string",
+        "enum": [
+          "normative",
+          "descriptive",
+          "evidence",
+          "procedure"
+        ]
+      }
+    }
+  },
+  "additionalProperties": {
+    "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+    ]
+  },
+  "types": {
+    "access-policy": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "adr": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "api": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "approval": {
+      "required": [
+        "valid_from",
+        "valid_until"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        },
+        "valid_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        },
+        "valid_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        }
+      }
+    },
+    "architecture-overview": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "archive-record": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "assumption": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "backup-plan": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "business-model": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "campaign": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "competitor": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "component": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "config": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "content": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "copy": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "cost-period": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "data-lifecycle": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "database-overview": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "dependency": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "deployment": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "design-asset": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "design-principles": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "dev-guide": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "development-conventions": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "development-guide": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "entity": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "environment": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "error": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "event": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "experiment": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "faq": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "feature": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "feedback": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "fixture": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "incident": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "interview": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "journey": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "metric": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "migration": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "module": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "page": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "plan": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "positioning": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "pricing": {
+      "required": [
+        "approval_ref",
+        "approved_by",
+        "effective_from",
+        "effective_until"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        },
+        "effective_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        }
+      }
+    },
+    "privacy": {
+      "required": [
+        "approval_ref",
+        "approved_by",
+        "effective_from",
+        "effective_until"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        },
+        "effective_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        }
+      }
+    },
+    "project-overview": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "refund-policy": {
+      "required": [
+        "approval_ref",
+        "approved_by",
+        "effective_from",
+        "effective_until"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        },
+        "effective_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        }
+      }
+    },
+    "release": {
+      "required": [
+        "release_state"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        },
+        "release_state": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "built",
+            "deployed",
+            "verified",
+            "rolled_back"
+          ]
+        }
+      }
+    },
+    "release-checklist": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "review": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "roadmap": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "runbook": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "secret-policy": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "security-baseline": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "security-control": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "security-finding": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "seo": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "service": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "signal": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "study": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "support-case": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "task": {
+      "required": [
+        "handover_ref",
+        "kind",
+        "priority",
+        "state"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        },
+        "handover_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "feature",
+            "bug",
+            "chore",
+            "docs",
+            "research"
+          ]
+        },
+        "priority": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "ready",
+            "doing",
+            "blocked",
+            "done",
+            "deferred",
+            "cancelled"
+          ]
+        }
+      }
+    },
+    "term": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "terms": {
+      "required": [
+        "approval_ref",
+        "approved_by",
+        "effective_from",
+        "effective_until"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        },
+        "effective_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-or-date-time"
+        }
+      }
+    },
+    "test-case": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "test-report": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    },
+    "test-strategy": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "test-suite": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "threat-model": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "descriptive"
+          ]
+        }
+      }
+    },
+    "token": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "normative"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "workflow": {
+      "required": [
+        "approval_ref",
+        "approved_by"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "procedure"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "worklog": {
+      "required": [],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": [
+            "evidence"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "id": "legacy-docs",
+  "description": "带架构方案、ADR 提案、交叉链接和 SVG 附件的历史 Markdown 项目。",
+  "source": "fixtures/legacy-docs"
+}

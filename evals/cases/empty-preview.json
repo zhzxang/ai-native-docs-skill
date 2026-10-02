@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "empty-preview",
+  "title": "空项目只读预览不应用",
+  "project": "empty-project",
+  "tags": [
+    "init",
+    "preview",
+    "scope"
+  ],
+  "prompt": "请使用 ai-docs-init 盘点 {project} 并预览最小初始化，计划保存在 {plans}。本次只需要预览结果，目标项目内保持原样，完成后说明将新增哪些文件。",
+  "steps": [
+    {
+      "action": "init",
+      "plan": "preview.json",
+      "preview": true
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "absent",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        ".gitkeep"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": []
+    }
+  ]
+}

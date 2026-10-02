@@ -1,0 +1,7 @@
+results/
+local-projects/
+projects/local/
+cases/local/
+__pycache__/
+*.pyc
+*.pyo

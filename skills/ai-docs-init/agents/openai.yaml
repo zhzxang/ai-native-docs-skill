@@ -1,6 +1,6 @@
 interface:
-  display_name: "轻量 AI 文档系统初始化"
-  short_description: "为新老项目接入轻量 AI 文档系统，规则和模板留在 Skill"
-  default_prompt: "使用 $ai-docs-init 为当前项目接入 AI 文档系统，保留已有文档和项目约定。"
+  display_name: "最小 AI 文档初始化"
+  short_description: "统一为新旧项目创建最小文档入口和配置，历史迁移与代码同步分别执行"
+  default_prompt: "使用 $ai-docs-init 为当前项目初始化最小 AI 文档系统，再根据盘点报告后续动作。"
 policy:
   allow_implicit_invocation: true

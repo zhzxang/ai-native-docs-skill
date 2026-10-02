@@ -1,0 +1,56 @@
+.page { max-width: 1100px; padding: 34px 40px 26px; margin: 0 auto; }
+.page-header { display: flex; justify-content: space-between; align-items: center; }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; letter-spacing: .03em; }
+.brand-mark { display: inline-grid; place-items: center; width: 30px; height: 30px; background: #2d5545; color: #fff; border-radius: 9px; }
+.local-note { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #7e8980; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: #6d9578; }
+.intro { padding: 67px 0 33px; text-align: center; }
+.eyebrow { margin: 0 0 12px; font-size: 10px; font-weight: 650; letter-spacing: .19em; color: #859183; }
+h1 { margin: 0; font-size: clamp(34px, 5vw, 47px); font-weight: 620; line-height: 1.5; letter-spacing: -.04em; }
+h1 span { color: #78917b; }
+.intro-copy { color: #7c867e; font-size: 13px; margin: 16px 0 0; }
+.todo-card { max-width: 620px; margin: 0 auto; padding: 30px 32px 0; background: #fffefb; border: 1px solid #e6e7df; border-radius: 22px; box-shadow: 0 14px 45px #243a3010; }
+.card-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.card-heading .eyebrow { margin-bottom: 7px; }
+h2 { font-size: 20px; margin: 0; font-weight: 650; }
+.remaining-count { display: flex; align-items: baseline; gap: 6px; color: #2d5545; font-size: 31px; line-height: 1; font-weight: 550; }
+.remaining-count small { color: #8b958b; font-size: 11px; font-weight: 400; }
+.add-form { display: flex; gap: 8px; background: #f3f4ee; padding: 6px; border-radius: 12px; }
+.add-form input { flex: 1; width: 100%; min-width: 0; border: 0; background: transparent; padding: 9px 12px; font-size: 13px; color: #253b32; }
+.add-form input::placeholder { color: #9da59b; }
+.add-button { border: 0; border-radius: 8px; padding: 10px 15px; background: #2d5545; color: #fff; font-size: 12px; white-space: nowrap; }
+.add-button span { font-size: 16px; vertical-align: -1px; }
+.add-button:disabled { opacity: .5; }
+.list-toolbar { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 13px; }
+.filters { display: flex; gap: 3px; }
+.filters button { background: transparent; border: 0; color: #8a958b; border-radius: 6px; padding: 7px 12px; font-size: 12px; }
+.filters button[aria-pressed='true'] { color: #375745; background: #eaf0e6; font-weight: 600; }
+.total-count { color: #9aa197; font-size: 11px; }
+.todo-list { list-style: none; margin: 0; padding: 0; min-height: 216px; }
+.todo-item { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #eff0e9; min-height: 62px; padding: 9px 2px; }
+.todo-label { display: flex; flex: 1; min-width: 0; align-items: center; gap: 13px; cursor: pointer; }
+.todo-label input { flex: 0 0 auto; width: 19px; height: 19px; margin: 0; accent-color: #60866a; cursor: pointer; }
+.todo-label span { font-size: 14px; overflow-wrap: anywhere; line-height: 1.6; }
+.completed .todo-label span { text-decoration: line-through; color: #a1a99e; }
+.delete-button { flex-shrink: 0; background: transparent; border: 0; color: #a6ada3; width: 32px; height: 32px; font-size: 23px; border-radius: 7px; }
+.delete-button:hover { color: #aa5a41; background: #fbefea; }
+.empty-state { min-height: 216px; text-align: center; padding: 39px 15px 33px; }
+.empty-symbol { display: inline-grid; place-items: center; width: 43px; height: 43px; border-radius: 50%; background: #edf1e9; color: #9aad94; font-size: 21px; }
+.empty-state h3 { margin: 16px 0 7px; font-size: 14px; font-weight: 550; }
+.empty-state p { margin: 0; font-size: 12px; color: #9ba497; line-height: 1.6; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding: 18px 0 20px; border-top: 1px solid #e9ece3; color: #909a8d; font-size: 11px; }
+.card-footer button { background: transparent; border: 0; color: #63836b; padding: 5px 0 5px 10px; font-size: 11px; }
+.card-footer button:disabled { color: #bac1b6; }
+.storage-error { margin: 0; padding: 0 0 18px; color: #a25b3f; font-size: 12px; line-height: 1.6; }
+.page-footer { display: flex; justify-content: center; align-items: center; gap: 14px; margin: 29px 0 0; color: #9ba497; font-size: 11px; }
+.page-footer span { color: #c3ad86; font-size: 18px; }
+@media (max-width: 600px) {
+  .page { padding: 24px 18px; }
+  .intro { padding-top: 46px; }
+  .todo-card { padding: 25px 20px 0; border-radius: 18px; }
+  .local-note { font-size: 10px; }
+  .brand { font-size: 14px; }
+  .remaining-count { font-size: 26px; }
+  .add-form input { padding-left: 7px; }
+  .add-button { padding: 10px 11px; }
+}

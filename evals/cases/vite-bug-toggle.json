@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "id": "vite-bug-toggle",
+  "title": "Codex 修复单条待办切换导致全部条目变化的问题",
+  "project": "vite-todo",
+  "tags": [
+    "vite",
+    "node",
+    "todo-development",
+    "bugfix"
+  ],
+  "engines": [
+    "codex"
+  ],
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "setup-sync.json"
+    },
+    {
+      "action": "node_dependencies"
+    },
+    {
+      "action": "replace",
+      "path": "src/lib/todos.ts",
+      "old": "return todos.map((todo) => todo.id === id ? { ...todo, completed: !todo.completed } : todo)",
+      "new": "return todos.map((todo) => ({ ...todo, completed: !todo.completed }))"
+    }
+  ],
+  "prompt": "Todo 发生了一个完成状态问题：新增两条未完成待办“读书”和“运动”，只勾选“读书”，结果“运动”也变成已完成；再次取消“读书”又影响了其他条目。请定位并修复，让一次切换只影响指定条目，未知 ID 不改变任何条目，保留排序、ID、标题和原数组数据。不要通过 UI 隐藏问题；保持其他新增、删除、筛选、清空和存储行为。添加针对多条混合完成状态、未知 ID 及不修改输入的回归测试，运行 npm test 和 npm run build（包含 TypeScript 检查）。依赖已在环境准备阶段提供。按 ai-docs-check 规则更新已有架构总览，记录切换边界、问题原因和回归覆盖；可以同步补充已有开发指南中的测试方法，保留两个文档原 ID，不新增其他文档，批准与没有实际执行证据的核验保持未知。修复范围限定 src/lib/todos.ts、tests 下测试、已有架构总览和开发指南；App、存储模块、清单、锁文件、配置和入口保持原样。不安装依赖。完成后校验文档结构。",
+  "assertions": [
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json",
+        "src/App.tsx",
+        "src/App.css",
+        "src/lib/todo-storage.ts",
+        "src/main.tsx",
+        "src/index.css"
+      ],
+      "patterns": [
+        "public/**",
+        "*.json",
+        "*.html",
+        ".gitignore"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "src/lib/todos.ts",
+        "tests/**",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md"
+      ]
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft"
+      },
+      "optional_null_fields": [
+        "approved_by",
+        "approval_ref"
+      ]
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/development/quickstart.md",
+      "fields": {
+        "id": "DEV-QUICKSTART",
+        "type": "development-guide",
+        "status": "draft"
+      },
+      "optional_null_fields": [
+        "approved_by",
+        "approval_ref"
+      ]
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/architecture/overview.md",
+      "texts": [
+        "toggleTodo"
+      ]
+    },
+    {
+      "kind": "regex",
+      "path": "docs/engineering/architecture/overview.md",
+      "pattern": "(仅|只|指定|目标)[^\n。]{0,50}(条目|待办|ID|id)"
+    },
+    {
+      "kind": "regex",
+      "path": "docs/engineering/architecture/overview.md",
+      "pattern": "(回归|测试|test)"
+    },
+    {
+      "kind": "changed",
+      "patterns": [
+        "tests/**"
+      ],
+      "min_count": 1
+    },
+    {
+      "kind": "external_verifier",
+      "script": "todo-behavior.mjs",
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "command",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "command",
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "id": "vite-init-sync",
+  "title": "Vite Todo 初始化并同步清单来源草案",
+  "project": "vite-todo",
+  "tags": [
+    "vite",
+    "node",
+    "init",
+    "sync",
+    "smoke"
+  ],
+  "prompt": "请使用 ai-docs-init 初始化当前项目，再使用 ai-docs-sync 同步架构总览和开发指南。我授权预览并应用计划，计划保存在 {plans}。这次只生成脚本可直接证明的来源草案，不进行人工架构补写或运行 npm 命令；源码和清单保持原样，核验字段保持未知。",
+  "steps": [
+    {
+      "action": "init",
+      "plan": "init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "sync.json"
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "patterns": [
+        "src/**",
+        "public/**",
+        "tests/**",
+        "*.json",
+        "*.html",
+        ".gitignore"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null
+      }
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/development/quickstart.md",
+      "fields": {
+        "id": "DEV-QUICKSTART",
+        "type": "development-guide",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "approved_by": null,
+        "approval_ref": null
+      }
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/architecture/overview.md",
+      "texts": [
+        "src/lib",
+        "src",
+        "package.json"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/development/quickstart.md",
+      "texts": [
+        ">=22.18.0",
+        "tsc -b && vite build",
+        "node --test tests/*.test.mjs"
+      ]
+    }
+  ]
+}

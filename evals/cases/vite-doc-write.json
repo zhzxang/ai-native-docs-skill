@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "id": "vite-doc-write",
+  "title": "Codex 阅读 Todo 并写入产品功能文档",
+  "project": "vite-todo",
+  "tags": [
+    "vite",
+    "node",
+    "todo-development",
+    "doc-write"
+  ],
+  "engines": [
+    "codex"
+  ],
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "setup-sync.json"
+    }
+  ],
+  "prompt": "当前 Todo 项目已经初始化文档系统并有架构与开发指南草案。请阅读源码和现有文档，使用 ai-docs-check 的检索、路由与写入规则新增一条 feature，ID 为 FEAT-TODO-001，slug 为 todo-behavior，标题为“Todo 功能说明”。记录已有的新增、切换完成、删除、全部/待完成/已完成筛选、清空已完成流程；解释 Todo 的 id/text/completed 字段、纯函数职责、真实 localStorage 键名、读取和保存时机、空白标题和重复 ID 拒绝、损坏或无效存储数据的处理，以及后端与网络边界。以源码证据描述现状，不推断未实现功能。保留 draft 状态，核验与批准字段为 null，不运行 npm 命令。只新增这一条功能记录，保留已有架构、开发指南、入口、配置和源码；不要新增系统资源或其他类别文档。完成后校验文档结构。",
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "docs/product/features.md"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md"
+      ],
+      "patterns": [
+        "src/**",
+        "public/**",
+        "tests/**",
+        "*.json",
+        "*.html",
+        "*.ts",
+        ".gitignore"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "docs/product/features.md"
+      ]
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/product/features.md",
+      "record_id": "FEAT-TODO-001",
+      "fields": {
+        "id": "FEAT-TODO-001",
+        "type": "feature",
+        "status": "draft",
+        "authority": "normative",
+        "verified_at": null,
+        "verification_ref": null,
+        "approved_by": null,
+        "approval_ref": null
+      }
+    },
+    {
+      "kind": "record_count",
+      "type": "feature",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    },
+    {
+      "kind": "contains",
+      "path": "docs/product/features.md",
+      "texts": [
+        "addTodo",
+        "toggleTodo",
+        "removeTodo",
+        "filterTodos",
+        "clearCompleted",
+        "loadTodos",
+        "saveTodos",
+        "id",
+        "text",
+        "completed",
+        "localStorage",
+        "vite-todo.items.v1"
+      ]
+    },
+    {
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(空白|空字符串|空标题|空内容|为空|blank)"
+    },
+    {
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(重复|duplicate)[^\n。]{0,60}(ID|id)|(ID|id)[^\n。]{0,60}(重复|duplicate)"
+    },
+    {
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(损坏|无效|非法|解析失败|invalid|corrupt)"
+    },
+    {
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(不|无|没有)[^\n。]{0,40}(后端|服务端|backend)"
+    },
+    {
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(不|无|没有)[^\n。]{0,40}(网络|请求|network|fetch)"
+    },
+    {
+      "id": "todo-load-timing",
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(?is)(?:initialTodos|useState|初始化|首次(?:加载|渲染|挂载)|初次(?:加载|渲染|挂载)|initial(?:ization| render| load))(?:(?!\\n\\s*\\n).){0,180}loadTodos|loadTodos(?:(?!\\n\\s*\\n).){0,180}(?:initialTodos|useState|初始化|首次(?:加载|渲染|挂载)|初次(?:加载|渲染|挂载)|initial(?:ization| render| load))"
+    },
+    {
+      "id": "todo-save-effect",
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(?is)(?:useEffect|effect|副作用).{0,180}saveTodos|saveTodos.{0,180}(?:useEffect|effect|副作用)"
+    },
+    {
+      "id": "todo-save-on-change",
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(?is)(?:saveTodos|useEffect|持久化|保存).{0,120}(?:\\[todos\\]|todos.{0,24}(?:变化|变更|更新|改变|change)|(?:待办|列表|状态).{0,12}(?:变化|变更|更新|改变))|(?:\\[todos\\]|todos.{0,24}(?:变化|变更|更新|改变|change)|(?:待办|列表|状态).{0,12}(?:变化|变更|更新|改变)).{0,120}(?:saveTodos|useEffect|持久化|保存)"
+    },
+    {
+      "id": "todo-corrupt-empty",
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(?is)(?:(?:JSON(?:\\.parse)?|解析|存储|storage).{0,70}(?:失败|异常|损坏|无效|非数组|非法|fail|invalid|throw|corrupt)|(?:失败|异常|损坏|无效|非数组|非法|fail|invalid|corrupt).{0,40}(?:JSON(?:\\.parse)?|数据|存储|storage)).{0,100}(?:\\[\\]|空(?:数组|列表|待办)|empty\\s*(?:array|list))"
+    },
+    {
+      "id": "todo-storage-error-feedback",
+      "kind": "regex",
+      "path": "docs/product/features.md",
+      "pattern": "(?is)(?:App|组件|界面|UI).{0,220}(?:(?:catch|handl|捕获|捕捉|处理).{0,140}(?:存储|Storage)|(?:存储|Storage).{0,140}(?:catch|handl|捕获|捕捉|处理)).{0,200}(?:storageError|显示|展示|提示|告警|警告|message|warn|banner)"
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    }
+  ]
+}

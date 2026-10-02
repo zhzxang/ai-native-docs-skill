@@ -1,0 +1,10 @@
+[project]
+name = "inventory-cli"
+version = "0.1.0"
+description = "Local JSON inventory managed by a Python standard-library CLI"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+inventory-cli = "inventory_cli.cli:main"
+

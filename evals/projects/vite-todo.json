@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "id": "vite-todo",
+  "description": "使用 create-vite 生成的 React + TypeScript Todo 前端，包含纯领域逻辑、localStorage 持久化和 Node 内置测试。",
+  "source": "fixtures/vite-todo"
+}

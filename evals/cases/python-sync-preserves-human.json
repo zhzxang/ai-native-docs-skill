@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "id": "python-sync-preserves-human",
+  "title": "再次同步保留人工架构内容",
+  "project": "python-cli",
+  "tags": [
+    "sync",
+    "python",
+    "preservation"
+  ],
+  "prompt": "项目已初始化并同步过文档，架构文档后来加入了人工说明。请使用 ai-docs-sync 检查并应用代码同步计划，计划放在 {plans}；我授权本次同步。源码未变，这次只做确定性同步，保留人工内容和已有文档身份，不另建相同类型对象。",
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "setup-sync.json"
+    },
+    {
+      "action": "append",
+      "path": "docs/engineering/architecture/overview.md",
+      "content": "\n## 人工确认\n\nMANUAL-KEEP-001：库存文件由使用者备份。\n"
+    }
+  ],
+  "steps": [
+    {
+      "action": "sync",
+      "plan": "sync.json"
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        ".gitignore",
+        "pyproject.toml",
+        "inventory_cli/__init__.py",
+        "inventory_cli/__main__.py",
+        "inventory_cli/cli.py",
+        "inventory_cli/store.py",
+        "data/example.json",
+        "tests/test_inventory.py",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": []
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/architecture/overview.md",
+      "text": "MANUAL-KEEP-001：库存文件由使用者备份。"
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "authority": "descriptive"
+      }
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/development/quickstart.md",
+      "fields": {
+        "id": "DEV-QUICKSTART",
+        "type": "development-guide",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "authority": "procedure",
+        "approved_by": null,
+        "approval_ref": null
+      }
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    },
+    {
+      "kind": "command",
+      "argv": [
+        "{python}",
+        "-m",
+        "inventory_cli",
+        "--data",
+        "data/example.json",
+        "list"
+      ],
+      "expected_exit": 0,
+      "stdout_contains": "Pencil\t3\nNotebook\t2\n"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "id": "python-repeat-sync",
+  "title": "未修改代码重复同步不重写草案",
+  "project": "python-cli",
+  "tags": [
+    "sync",
+    "python",
+    "idempotence"
+  ],
+  "prompt": "这个 Python 项目已初始化且已同步最小文档，源码、清单和文档均未变化。请使用 ai-docs-sync 再次预览并应用同步计划，计划放在 {plans}。我授权同步；没有变化时保留原文件，报告无需更新。",
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "setup-sync.json"
+    }
+  ],
+  "steps": [
+    {
+      "action": "sync",
+      "plan": "repeat-sync.json"
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        ".gitignore",
+        "pyproject.toml",
+        "inventory_cli/__init__.py",
+        "inventory_cli/__main__.py",
+        "inventory_cli/cli.py",
+        "inventory_cli/store.py",
+        "data/example.json",
+        "tests/test_inventory.py",
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": []
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "authority": "descriptive"
+      }
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/development/quickstart.md",
+      "fields": {
+        "id": "DEV-QUICKSTART",
+        "type": "development-guide",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "authority": "procedure",
+        "approved_by": null,
+        "approval_ref": null
+      }
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    }
+  ]
+}

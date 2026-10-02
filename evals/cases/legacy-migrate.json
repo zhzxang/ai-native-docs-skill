@@ -1,0 +1,153 @@
+{
+  "version": 1,
+  "id": "legacy-migrate",
+  "title": "显式迁移完整架构与 ADR 并修复引用",
+  "project": "legacy-docs",
+  "tags": [
+    "init",
+    "migrate",
+    "legacy",
+    "links",
+    "preservation"
+  ],
+  "prompt": "请先使用 ai-docs-init 初始化 {project}，然后使用 ai-docs-migrate 迁移 legacy/architecture.md 和 legacy/storage-decision.md。我明确授权预览并应用这些计划，计划放在 {plans}。架构文档映射为 architecture-overview，ID 为 ARCH-OVERVIEW，标题为 Parcel Ledger 架构方案，slug 为 architecture-overview；存储提案映射为 adr，ID 为 ADR-001，标题为使用本地 JSON 存储的提案，slug 为 local-json-storage。完整保留原文事实、附件和双向链接，旧路径保留薄跳转；未批准或未核验的字段保持未知。notes/out-of-scope.md 不参与迁移。",
+  "steps": [
+    {
+      "action": "init",
+      "plan": "init.json"
+    },
+    {
+      "action": "migrate",
+      "plan": "migration.json",
+      "mapping": {
+        "documents": [
+          {
+            "source": "legacy/architecture.md",
+            "type": "architecture-overview",
+            "id": "ARCH-OVERVIEW",
+            "title": "Parcel Ledger 架构方案",
+            "slug": "architecture-overview"
+          },
+          {
+            "source": "legacy/storage-decision.md",
+            "type": "adr",
+            "id": "ADR-001",
+            "title": "使用本地 JSON 存储的提案",
+            "slug": "local-json-storage"
+          }
+        ]
+      }
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "exists",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json"
+      ]
+    },
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    },
+    {
+      "kind": "exists",
+      "paths": [
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/adrs.md"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        "legacy/assets/ledger-flow.svg",
+        "notes/out-of-scope.md"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "README.md",
+        "AGENTS.md",
+        "docs/README.md",
+        "docs/AGENTS.md",
+        "docs/.ai-docs.json",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/adrs.md",
+        "legacy/architecture.md",
+        "legacy/storage-decision.md"
+      ]
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft",
+        "verified_at": null,
+        "verification_ref": null,
+        "authority": "descriptive"
+      }
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "adr",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 0
+    },
+    {
+      "kind": "redirect",
+      "path": "legacy/architecture.md"
+    },
+    {
+      "kind": "redirect",
+      "path": "legacy/storage-decision.md"
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/architecture/overview.md",
+      "texts": [
+        "LEGACY-ARCH-001：仓库管理员在单台电脑上登记包裹编号、货架位置与领取时间。此文档描述历史设计方案，样本尚无实现代码。",
+        "录入界面负责字段输入与提示；登记模块负责包裹编号唯一性；文件存储模块负责加载和保存 JSON。登记模块不直接访问文件系统。",
+        "用户提交包裹编号后，登记模块先检查重复编号，再通过存储接口写入本地文件。读取失败时保留原文件并显示错误，不以空数据覆盖历史记录。",
+        "LEGACY-ARCH-002：当前纸面方案没有账号系统、网络同步或多机并发能力。",
+        "ledger-flow.svg",
+        "adrs.md#"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/adrs.md",
+      "texts": [
+        "ADR-001",
+        "LEGACY-ADR-001：使用者需要离线登记少量包裹。比较过 SQLite 与 JSON 文件，本阶段偏向使用 JSON，便于人工备份与检查。",
+        "这是未经批准的历史提案。JSON 文件由本地文件存储模块维护，业务模块只依赖存储接口；",
+        "LEGACY-ADR-002：单个文件的整体写入限制了并发能力；若出现多人同时编辑，需要重新评估 SQLite 或服务端数据库。当前资料没有性能测试、负责人批准或实际执行记录。",
+        "architecture/overview.md#"
+      ]
+    }
+  ]
+}

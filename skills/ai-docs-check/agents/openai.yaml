@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI 文档类型校验"
+  short_description: "按文档类型校验元数据、结构和引用，提供初始化与日常写入的公共协议"
+  default_prompt: "使用 $ai-docs-check 校验当前候选文档的类型元数据及项目文档结构。"
+policy:
+  allow_implicit_invocation: true

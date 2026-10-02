@@ -1,0 +1,6 @@
+interface:
+  display_name: "历史文档迁移"
+  short_description: "按明确范围和类型映射迁移历史正文，保留元数据、附件和仓库链接关系"
+  default_prompt: "使用 $ai-docs-migrate 迁移当前项目已明确指定范围的历史文档，并校验结果。"
+policy:
+  allow_implicit_invocation: true

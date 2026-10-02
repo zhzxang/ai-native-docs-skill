@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "id": "vite-feature-edit",
+  "title": "Codex 为 Todo 新增编辑功能并维护文档",
+  "project": "vite-todo",
+  "tags": [
+    "vite",
+    "node",
+    "todo-development",
+    "feature"
+  ],
+  "engines": [
+    "codex"
+  ],
+  "setup": [
+    {
+      "action": "init",
+      "plan": "setup-init.json"
+    },
+    {
+      "action": "sync",
+      "plan": "setup-sync.json"
+    },
+    {
+      "action": "node_dependencies"
+    }
+  ],
+  "prompt": "请为当前 Todo 新增编辑待办内容功能，并保持已有新增、切换、删除、筛选、清空与持久化行为。每条待办显示“编辑”按钮，点击后打开编辑表单，字段的可访问名称为“编辑待办内容”，提供“保存”和“取消”；Enter 保存，Escape 取消，取消时原内容不变。保存会去除首尾空白；空白内容不保存；ID、完成状态、其他条目和排序保持不变。为领域模块 src/lib/todos.ts 添加具名导出 renameTodo(todos, id, text)，未知 ID 和空白输入保持原列表数据，使用现有存储键持久化编辑结果，刷新后仍保留。遵循 ai-docs-check 规则补充既有架构和开发指南，新增 feature FEAT-TODO-EDIT，slug 为 todo-edit，描述交互、边界与验收方法；文档保持草案、批准字段为 null，真实运行证据可记录，不能自称已获人工批准。添加覆盖编辑正常流程、空白、未知 ID、取消和原有行为的回归测试，运行 npm test 和 npm run build（构建包含 TypeScript 检查），依赖已在环境准备阶段提供，无需安装或升级依赖。允许修改 src/App.tsx、src/App.css、src/lib/todos.ts、tests 下测试和业务 Markdown 文档；保持存储模块、清单、锁文件、项目入口和文档配置不变。完成后校验文档结构。",
+  "assertions": [
+    {
+      "kind": "absent",
+      "paths": [
+        "docs/_system",
+        "docs/_templates",
+        "docs/_tools",
+        "docs/_generated"
+      ]
+    },
+    {
+      "kind": "unchanged",
+      "paths": [
+        "README.md",
+        "AGENTS.md",
+        "docs/AGENTS.md",
+        "docs/README.md",
+        "docs/.ai-docs.json",
+        "src/lib/todo-storage.ts",
+        "src/main.tsx",
+        "src/index.css"
+      ],
+      "patterns": [
+        "public/**",
+        "*.json",
+        "*.html",
+        ".gitignore"
+      ]
+    },
+    {
+      "kind": "only_changes",
+      "allowed": [
+        "src/App.tsx",
+        "src/App.css",
+        "src/lib/todos.ts",
+        "tests/**",
+        "docs/product/features.md",
+        "docs/engineering/architecture/overview.md",
+        "docs/engineering/development/quickstart.md"
+      ]
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/product/features.md",
+      "record_id": "FEAT-TODO-EDIT",
+      "fields": {
+        "id": "FEAT-TODO-EDIT",
+        "type": "feature",
+        "status": "draft",
+        "authority": "normative",
+        "approved_by": null,
+        "approval_ref": null
+      }
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/architecture/overview.md",
+      "fields": {
+        "id": "ARCH-OVERVIEW",
+        "type": "architecture-overview",
+        "status": "draft"
+      },
+      "optional_null_fields": [
+        "approved_by",
+        "approval_ref"
+      ]
+    },
+    {
+      "kind": "doc_meta",
+      "path": "docs/engineering/development/quickstart.md",
+      "fields": {
+        "id": "DEV-QUICKSTART",
+        "type": "development-guide",
+        "status": "draft"
+      },
+      "optional_null_fields": [
+        "approved_by",
+        "approval_ref"
+      ]
+    },
+    {
+      "kind": "record_count",
+      "type": "feature",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "architecture-overview",
+      "count": 1
+    },
+    {
+      "kind": "record_count",
+      "type": "development-guide",
+      "count": 1
+    },
+    {
+      "kind": "contains",
+      "path": "docs/product/features.md",
+      "texts": [
+        "renameTodo",
+        "编辑",
+        "保存",
+        "取消",
+        "vite-todo.items.v1"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/architecture/overview.md",
+      "texts": [
+        "renameTodo"
+      ]
+    },
+    {
+      "kind": "contains",
+      "path": "docs/engineering/development/quickstart.md",
+      "texts": [
+        "npm test",
+        "npm run build"
+      ]
+    },
+    {
+      "kind": "changed",
+      "patterns": [
+        "tests/**"
+      ],
+      "min_count": 1
+    },
+    {
+      "kind": "external_verifier",
+      "script": "todo-behavior.mjs",
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "external_verifier",
+      "script": "todo-edit.mjs",
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "external_verifier",
+      "script": "todo-edit-ui.mjs",
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "command",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "command",
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "expected_exit": 0,
+      "timeout": 60
+    },
+    {
+      "kind": "doc_check",
+      "expected_exit": 0
+    }
+  ]
+}

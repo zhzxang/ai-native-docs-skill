@@ -1,0 +1,6 @@
+interface:
+  display_name: "代码文档同步"
+  short_description: "从代码清单同步最小架构和开发入口草案，保留人工修改并校验来源哈希"
+  default_prompt: "使用 $ai-docs-sync 从当前项目代码同步必要文档草案，保留未知业务事实。"
+policy:
+  allow_implicit_invocation: true
